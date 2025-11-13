@@ -151,16 +151,12 @@ class AgentSession:
 
         options_dict = {
             "allowed_tools": [
-                # File operations
-                "Read", "Write", "Edit", "Glob", "Grep",
-                # Shell operations
-                "Bash", "BashOutput", "KillShell",
-                # Notebook operations
-                "NotebookEdit",
-                # Agent and workflow tools
-                "Task", "Skill", "SlashCommand", "TodoWrite",
-                # Web and external resources
-                "WebFetch", "ListMcpResourcesTool", "ReadMcpResourceTool",
+                # Core file operations
+                "Read", "Write", "Edit",
+                # Code search and navigation
+                "Glob", "Grep",
+                # Shell execution
+                "Bash",
             ],
             "system_prompt": system_prompt_config,
             "max_turns": 0,
