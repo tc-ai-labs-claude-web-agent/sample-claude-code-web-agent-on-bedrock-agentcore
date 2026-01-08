@@ -98,9 +98,15 @@ async def lifespan(app: FastAPI):
     import os
     global claude_sync_manager
 
+    # Check if S3 sync is enabled (default: true for backward compatibility)
+    s3_sync_enabled = os.environ.get("ENABLE_S3_SYNC", "true").lower() in ["true", "1", "yes"]
     s3_bucket = os.environ.get("S3_WORKSPACE_BUCKET")
-    if s3_bucket:
+
+    if not s3_sync_enabled:
+        print("⚠️  S3 sync disabled (ENABLE_S3_SYNC=false)")
+    elif s3_bucket:
         print(f"📦 S3 Workspace Bucket: {s3_bucket}")
+        print(f"🔄 S3 Sync: Enabled")
         claude_sync_manager = initialize_claude_sync_manager()
         if claude_sync_manager:
             claude_sync_manager.start_backup_task()

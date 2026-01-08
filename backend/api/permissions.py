@@ -33,7 +33,7 @@ async def respond_to_permission(session_id: str, response: PermissionResponse):
         Success message
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
     session.respond_to_permission(
         request_id=response.request_id,
         allowed=response.allowed,

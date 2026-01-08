@@ -40,7 +40,7 @@ async def get_session_status(session_id: str):
         Session status including pending permissions
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
     return session.get_status()
 
 
@@ -57,7 +57,7 @@ async def send_message(session_id: str, request: SendMessageRequest):
         Assistant's response
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
     return await session.send_message(request.message)
 
 
@@ -94,7 +94,7 @@ async def send_message_stream(session_id: str, request: SendMessageRequest):
         Server-Sent Events stream with real-time updates
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
 
     async def event_generator():
         """Generate SSE events from the agent response."""
@@ -135,7 +135,7 @@ async def set_model(session_id: str, request: SetModelRequest):
         Success message with new model
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
     await session.set_model(request.model)
     return {"status": "ok", "model": request.model}
 
@@ -152,7 +152,7 @@ async def interrupt_session(session_id: str):
         Success message
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
     await session.interrupt()
     return {"status": "interrupted"}
 
@@ -170,6 +170,6 @@ async def set_permission_mode(session_id: str, request: SetPermissionModeRequest
         Success message with new mode
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
     await session.set_permission_mode(request.mode)
     return {"status": "ok", "mode": request.mode}

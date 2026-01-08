@@ -192,42 +192,8 @@ class AgentSession:
         }
 
         if resume_session_id:
-            # SDK expects full path to session file, not just session ID
-            # Construct the path based on cwd
-            if self.cwd:
-                path_key = self.cwd.replace("/", "-").replace("_", "-")
-                session_file = (
-                    Path.home()
-                    / ".claude"
-                    / "projects"
-                    / path_key
-                    / f"{resume_session_id}.jsonl"
-                )
-                if session_file.exists():
-                    options_dict["resume"] = str(session_file)
-                else:
-                    # Session file not found in specified cwd
-                    raise HTTPException(
-                        status_code=404,
-                        detail=f"Session {resume_session_id} not found in cwd {self.cwd}"
-                    )
-            else:
-                # No cwd provided, search all project directories
-                session_dir = Path.home() / ".claude" / "projects"
-                found = False
-                for project_dir in session_dir.iterdir():
-                    if not project_dir.is_dir():
-                        continue
-                    potential_file = project_dir / f"{resume_session_id}.jsonl"
-                    if potential_file.exists():
-                        options_dict["resume"] = str(potential_file)
-                        found = True
-                        break
-                if not found:
-                    raise HTTPException(
-                        status_code=404,
-                        detail=f"Session {resume_session_id} not found"
-                    )
+            # SDK expects just the session ID, not the full path
+            options_dict["resume"] = resume_session_id
 
         if self.model:
             options_dict["model"] = self.model
@@ -258,6 +224,18 @@ class AgentSession:
                 print(f"[Session]   {key}={value}")
         else:
             print(f"[Session] No custom environment variables")
+
+        # Print SDK options for debugging
+        print(f"[Session] ========== SDK Connection Options ==========")
+        print(f"[Session] allowed_tools: {len(options_dict.get('allowed_tools', []))} tools")
+        print(f"[Session] model: {options_dict.get('model', 'default')}")
+        print(f"[Session] cwd: {options_dict.get('cwd', 'None')}")
+        print(f"[Session] resume: {options_dict.get('resume', 'None (new session)')}")
+        print(f"[Session] permission_mode: {options_dict.get('permission_mode', 'default')}")
+        print(f"[Session] max_turns: {options_dict.get('max_turns', 0)}")
+        if env_vars:
+            print(f"[Session] env vars: {list(env_vars.keys())}")
+        print(f"[Session] ===============================================")
 
         options = ClaudeAgentOptions(**options_dict)
 
@@ -539,10 +517,13 @@ class AgentSession:
             "session_id": real_session_id if 'real_session_id' in locals() else self.session_id
         }
 
-        from .claude_sync_manager import get_claude_sync_manager
-        sync_manager = get_claude_sync_manager()
-        if sync_manager:
-            asyncio.create_task(sync_manager.backup_after_task(self.user_id))
+        # Backup to S3 after task completion (if S3 sync is enabled)
+        s3_sync_enabled = os.environ.get("ENABLE_S3_SYNC", "true").lower() in ["true", "1", "yes"]
+        if s3_sync_enabled:
+            from .claude_sync_manager import get_claude_sync_manager
+            sync_manager = get_claude_sync_manager()
+            if sync_manager:
+                asyncio.create_task(sync_manager.backup_after_task(self.user_id))
 
     async def set_model(self, model: Optional[str]):
         """

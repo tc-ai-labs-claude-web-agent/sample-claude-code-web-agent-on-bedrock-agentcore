@@ -170,7 +170,10 @@ async def invocations(http_request: Request, request: dict[str, Any]):
         project_name = project_name_from_header
 
     # Ensure user's .claude directory is synced from S3 (first time only)
-    if user_id:
+    # Only perform S3 sync if enabled
+    s3_sync_enabled = os.environ.get("ENABLE_S3_SYNC", "true").lower() in ["true", "1", "yes"]
+
+    if user_id and s3_sync_enabled:
         from ..server import claude_sync_manager
         if claude_sync_manager:
             try:
@@ -195,7 +198,8 @@ async def invocations(http_request: Request, request: dict[str, Any]):
             print(f"⚠️  Warning: Exception during GitHub OAuth initialization for user {user_id}: {e}")
 
     # Ensure project directory is synced from S3 (first time only)
-    if user_id and project_name:
+    # Only perform project sync if S3 sync is enabled
+    if user_id and project_name and s3_sync_enabled:
         from ..core.workspace_sync import sync_project_from_s3, backup_project_to_s3
         from pathlib import Path
         try:
@@ -266,23 +270,27 @@ async def invocations(http_request: Request, request: dict[str, Any]):
         resolved_path = resolved_path.replace(f"{{{key}}}", str(value))
 
     # Log the invocation with agentcore session ID prominently
-    if agentcore_session_id:
-        print(f"🔀 Invocation → {method} {resolved_path}")
-        print(f"   🆔 AgentCore Session ID: {agentcore_session_id}")
-        if user_id:
-            print(f"   👤 User ID: {user_id}")
-        session_id_from_path = path_params.get("session_id")
-        if session_id_from_path:
-            print(f"   📋 Path Session ID: {session_id_from_path}")
-    else:
-        # Fallback when no agentcore session ID
-        log_parts = [f"🔀 Invocation → {method} {resolved_path}"]
-        if user_id:
-            log_parts.append(f"user_id={user_id}")
-        session_id_from_path = path_params.get("session_id")
-        if session_id_from_path:
-            log_parts.append(f"session_id={session_id_from_path}")
-        print(" | ".join(log_parts))
+    # Skip logging for health/ping endpoints to reduce noise
+    is_health_check = path in ["/health", "/ping"]
+
+    if not is_health_check:
+        if agentcore_session_id:
+            print(f"🔀 Invocation → {method} {resolved_path}")
+            print(f"   🆔 AgentCore Session ID: {agentcore_session_id}")
+            if user_id:
+                print(f"   👤 User ID: {user_id}")
+            session_id_from_path = path_params.get("session_id")
+            if session_id_from_path:
+                print(f"   📋 Path Session ID: {session_id_from_path}")
+        else:
+            # Fallback when no agentcore session ID
+            log_parts = [f"🔀 Invocation → {method} {resolved_path}"]
+            if user_id:
+                log_parts.append(f"user_id={user_id}")
+            session_id_from_path = path_params.get("session_id")
+            if session_id_from_path:
+                log_parts.append(f"session_id={session_id_from_path}")
+            print(" | ".join(log_parts))
 
     # Route to appropriate endpoint based on path and method
     try:
@@ -321,19 +329,40 @@ async def invocations(http_request: Request, request: dict[str, Any]):
                 raise HTTPException(
                     status_code=400, detail="Missing session_id in path_params"
                 )
-            return await get_session_status(session_id)
+            # Pass user_id for auto-resume support
+            from ..api.messages import get_session_manager
+            manager = get_session_manager()
+            session = await manager.get_session(session_id, user_id=user_id)
+            return session.get_status()
 
         elif (
             path.startswith("/sessions/")
             and path.endswith("/messages/stream")
             and method == "POST"
         ):
-            # Send message with streaming
+            # Send message with streaming - with auto-resume/create support
             session_id = path_params.get("session_id")
             if not session_id:
                 raise HTTPException(
                     status_code=400, detail="Missing session_id in path_params"
                 )
+
+            # Determine cwd from project_name if available
+            session_cwd = None
+            if project_name:
+                workspace_base = os.environ.get("WORKSPACE_BASE_PATH", "/workspace")
+                session_cwd = f"{workspace_base}/{project_name}"
+
+            # Ensure session exists (auto-resume if exists, or create new if not)
+            from ..api.messages import get_session_manager
+            manager = get_session_manager()
+            session = await manager.get_session(
+                session_id,
+                user_id=user_id,
+                cwd=session_cwd
+            )
+
+            # Now send the message
             req = SendMessageRequest(**payload)
             from .messages import send_message_stream
             return await send_message_stream(session_id, req)

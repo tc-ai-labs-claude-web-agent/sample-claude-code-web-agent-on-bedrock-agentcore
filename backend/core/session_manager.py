@@ -239,21 +239,149 @@ class SessionManager:
 
         return session_id
 
-    def get_session(self, session_id: str) -> AgentSession:
+    async def get_session(
+        self,
+        session_id: str,
+        auto_resume: bool = True,
+        user_id: Optional[str] = None,
+        cwd: Optional[str] = None,
+    ) -> AgentSession:
         """
-        Get an active session by ID.
+        Get an active session by ID, optionally auto-resuming or creating if not in memory.
 
         Args:
             session_id: The session ID
+            auto_resume: Whether to automatically resume/create session if not active (default: True)
+            user_id: User ID for session creation (used when auto-resuming/creating)
+            cwd: Working directory (used when creating new session)
 
         Returns:
             The AgentSession instance
 
         Raises:
-            HTTPException: If session not found
+            HTTPException: If session not found and auto_resume is disabled
         """
-        if session_id not in self.sessions:
+        # Check if session is already active in memory
+        if session_id in self.sessions:
+            return self.sessions[session_id]
+
+        # Session not in memory
+        if not auto_resume:
             raise HTTPException(status_code=404, detail="Session not found")
+
+        # Try to find session file on disk for resumption
+        print(f"[SessionManager] Session {session_id} not in memory, checking for session file...")
+
+        session_file = None
+        session_cwd = None
+
+        if self.session_dir.exists():
+            for project_dir in self.session_dir.iterdir():
+                if not project_dir.is_dir():
+                    continue
+
+                potential_file = project_dir / f"{session_id}.jsonl"
+                if potential_file.exists():
+                    session_file = potential_file
+
+                    # Try to extract cwd from session file
+                    try:
+                        parsed = _parse_jsonl_sessions(potential_file)
+                        if parsed["sessions"]:
+                            session_cwd = parsed["sessions"][0].get("cwd", "")
+                    except Exception:
+                        pass
+
+                    break
+
+        # If session file found, resume it
+        if session_file:
+            print(f"[SessionManager] ========== Auto-Resume Session ==========")
+            print(f"[SessionManager] Found session file: {session_file}")
+            print(f"[SessionManager] Session ID: {session_id}")
+            print(f"[SessionManager] Extracted cwd from file: {session_cwd}")
+            print(f"[SessionManager] Provided cwd parameter: {cwd}")
+            print(f"[SessionManager] User ID: {user_id}")
+
+            # Use cwd from session file, fallback to provided cwd parameter
+            # If both are empty, infer cwd from session file path (project directory name)
+            # Priority: session_cwd > provided cwd parameter > inferred from path
+            resume_cwd = session_cwd if session_cwd else cwd
+
+            if not resume_cwd:
+                # Infer cwd from project directory name
+                # Path format: ~/.claude/projects/{path_key}/{session_id}.jsonl
+                # path_key format: cwd with "/" and "_" replaced by "-"
+                # Example: -workspace-my-project -> /workspace/my-project
+                project_dir_name = session_file.parent.name
+                # Reverse the path_key transformation
+                inferred_cwd = project_dir_name.replace("-", "/")
+                resume_cwd = inferred_cwd
+                print(f"[SessionManager] Inferred cwd from path: {inferred_cwd} (from project dir: {project_dir_name})")
+
+            print(f"[SessionManager] Final cwd for resume: {resume_cwd}")
+
+            # Calculate expected path_key for verification
+            if resume_cwd:
+                expected_path_key = resume_cwd.replace("/", "-").replace("_", "-")
+                print(f"[SessionManager] Expected path_key: {expected_path_key}")
+                print(f"[SessionManager] Actual project dir: {session_file.parent.name}")
+
+            # Resume the session with minimal configuration
+            import os
+            print(f"[SessionManager] Calling create_session with resume_session_id={session_id}")
+            resumed_session_id = await self.create_session(
+                user_id=user_id,
+                resume_session_id=session_id,
+                model=os.environ.get("ANTHROPIC_MODEL"),
+                background_model=None,
+                enable_proxy=False,  # Default to no proxy
+                server_port=8080,
+                cwd=resume_cwd,
+            )
+
+            print(f"[SessionManager] ✓ Auto-resumed session: {resumed_session_id}")
+            print(f"[SessionManager] ==========================================")
+            return self.sessions[resumed_session_id]
+
+        # No session file found, create new session with provided session_id
+        print(f"[SessionManager] No session file found, creating new session with ID: {session_id}")
+
+        # Create new AgentSession directly (not resuming, so don't use create_session with resume_session_id)
+        import os
+
+        # Check if session_id already in sessions (shouldn't happen, but safety check)
+        if session_id in self.sessions:
+            return self.sessions[session_id]
+
+        session = AgentSession(
+            session_id,
+            user_id,
+            os.environ.get("ANTHROPIC_MODEL"),
+            None,  # background_model
+            False,  # enable_proxy
+            8080,  # server_port
+            cwd,
+        )
+
+        # Connect without resume_session_id (creates new session)
+        await session.connect(resume_session_id=None)
+
+        self.sessions[session_id] = session
+
+        # Track user sync
+        if user_id:
+            from .claude_sync_manager import get_claude_sync_manager
+            sync_manager = get_claude_sync_manager()
+            if sync_manager:
+                sync_manager._synced_users.add(user_id)
+
+                if cwd and cwd.startswith("/workspace/") and cwd != "/workspace":
+                    project_name = cwd.replace("/workspace/", "")
+                    if "/" not in project_name:
+                        sync_manager.set_user_project(user_id, project_name)
+
+        print(f"[SessionManager] ✓ Created new session: {session_id}")
         return self.sessions[session_id]
 
     def update_session_id(self, old_session_id: str, new_session_id: str):

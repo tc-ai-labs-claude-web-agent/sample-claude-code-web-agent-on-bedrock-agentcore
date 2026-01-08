@@ -297,7 +297,7 @@ async def get_server_info(session_id: str):
         Server info dictionary with commands, output styles, etc.
     """
     manager = get_session_manager()
-    session = manager.get_session(session_id)
+    session = await manager.get_session(session_id)
     info = await session.get_server_info()
     return info
 
