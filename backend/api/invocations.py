@@ -718,6 +718,11 @@ async def invocations(http_request: Request, request: dict[str, Any]):
             req = GitPushRequest(**payload)
             return await push_commits(req)
 
+        elif path == "/mcp-servers" and method == "GET":
+            # List MCP servers
+            from .mcp_servers import list_mcp_servers
+            return await list_mcp_servers()
+
         elif path == "/health" and method == "GET":
             # Health check - import here to avoid circular dependency
             from ..server import health_check

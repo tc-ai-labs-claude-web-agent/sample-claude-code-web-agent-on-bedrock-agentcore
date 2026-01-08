@@ -53,6 +53,7 @@ from .api import (
     files_router,
     git_router,
     invocations_router,
+    mcp_servers_router,
     messages_router,
     oauth_router,
     permissions_router,
@@ -197,6 +198,9 @@ app.include_router(workspace_router, tags=["workspace"])
 
 # OAuth endpoints
 app.include_router(oauth_router, tags=["oauth"])
+
+# MCP servers endpoints
+app.include_router(mcp_servers_router, tags=["mcp-servers"])
 
 # AgentCore session management endpoints
 app.include_router(agentcore_router, tags=["agentcore"])

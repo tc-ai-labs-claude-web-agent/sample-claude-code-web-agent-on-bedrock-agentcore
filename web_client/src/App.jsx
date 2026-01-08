@@ -6,6 +6,7 @@ import SessionList from './components/SessionList'
 import FileBrowser from './components/FileBrowser'
 import GitPanel from './components/GitPanel'
 import ProjectPanel from './components/ProjectPanel'
+import MCPServersPanel from './components/MCPServersPanel'
 import FilePreview from './components/FilePreview'
 import SettingsModal from './components/SettingsModal'
 import TerminalPTY from './components/TerminalPTY'
@@ -97,7 +98,7 @@ function AppContent() {
   const [showProjectSwitcher, setShowProjectSwitcher] = useState(false)
 
   // Sidebar tab state
-  const [activeTab, setActiveTab] = useState('sessions') // 'files' | 'git' | 'sessions' | 'projects'
+  const [activeTab, setActiveTab] = useState('sessions') // 'files' | 'git' | 'sessions' | 'projects' | 'mcp-servers'
 
   // GitHub auth state
   const [githubAuthStatus, setGithubAuthStatus] = useState(null) // null | 'success' | 'pending' | 'error'
@@ -810,6 +811,18 @@ function AppContent() {
                 <line x1="6" y1="9" x2="6" y2="21"></line>
               </svg>
             </button>
+            <button
+              className={`sidebar-tab ${activeTab === 'mcp-servers' ? 'active' : ''}`}
+              onClick={() => setActiveTab('mcp-servers')}
+              title="MCP Servers"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+              </svg>
+            </button>
           </div>
 
           <div className="sidebar-content">
@@ -859,6 +872,15 @@ function AppContent() {
                 cwd={workingDirectory}
                 disabled={serverDisconnected}
                 isActive={activeTab === 'git'}
+              />
+            )}
+
+            {activeTab === 'mcp-servers' && (
+              <MCPServersPanel
+                serverUrl={settings.serverUrl}
+                disabled={serverDisconnected}
+                isActive={activeTab === 'mcp-servers'}
+                currentProject={currentProject}
               />
             )}
           </div>

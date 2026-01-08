@@ -215,3 +215,20 @@ class CreateProjectResponse(BaseModel):
     project_name: str
     local_path: str
     message: str
+
+
+class MCPServer(BaseModel):
+    """MCP server configuration."""
+
+    type: str  # "stdio" or other types
+    command: str
+    args: list[str]
+    env: dict[str, str]
+
+
+class ListMCPServersResponse(BaseModel):
+    """Response containing list of MCP servers."""
+
+    servers: dict[str, MCPServer]
+    mcp_config_path: str
+    exists: bool

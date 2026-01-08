@@ -602,6 +602,17 @@ class DirectAPIClient {
     return response.json()
   }
 
+  async listMCPServers() {
+    const authHeaders = await getAuthHeaders()
+    const response = await fetch(`${this.baseUrl}/mcp-servers`, {
+      headers: authHeaders
+    })
+    if (!response.ok) {
+      throw new Error('Failed to list MCP servers')
+    }
+    return response.json()
+  }
+
   async completeGithubOAuthCallback(sessionId) {
     const authHeaders = await getAuthHeaders()
     const response = await fetch(`${this.baseUrl}/oauth/github/callback?session_id=${encodeURIComponent(sessionId)}`, {
@@ -863,6 +874,10 @@ class InvocationsAPIClient {
 
   async getGithubToken() {
     return this._invoke('/oauth/github/token', 'POST')
+  }
+
+  async listMCPServers() {
+    return this._invoke('/mcp-servers', 'GET')
   }
 
   async completeGithubOAuthCallback(sessionId) {

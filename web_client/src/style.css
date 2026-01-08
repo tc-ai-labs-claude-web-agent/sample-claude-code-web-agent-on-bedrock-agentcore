@@ -3293,6 +3293,201 @@ body {
   flex-shrink: 0;
 }
 
+/* ============================================================================
+   MCP Servers Panel Styles
+   ============================================================================ */
+
+.mcp-servers-panel {
+  background: var(--card-bg);
+  padding: 16px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.mcp-servers-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mcp-servers-panel-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.mcp-servers-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mcp-servers-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.mcp-servers-info small {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.mcp-servers-list-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.mcp-servers-loading,
+.mcp-servers-empty,
+.mcp-servers-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.mcp-servers-loading p,
+.mcp-servers-empty p,
+.mcp-servers-error p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.mcp-servers-empty small {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.mcp-servers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mcp-server-item {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.mcp-server-item:hover {
+  border-color: var(--primary-color);
+}
+
+.mcp-server-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.mcp-server-header:hover {
+  background-color: var(--bg-color);
+}
+
+.mcp-server-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+}
+
+.mcp-server-name span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mcp-server-type {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  background: var(--bg-color);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.mcp-server-details {
+  padding: 0 12px 12px 12px;
+  background: var(--bg-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.mcp-server-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.mcp-server-detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.mcp-server-detail-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mcp-server-detail-row code {
+  display: inline-block;
+  padding: 4px 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  color: var(--text-primary);
+}
+
+.mcp-server-args {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mcp-server-env {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mcp-server-env-var code {
+  word-break: break-all;
+}
+
 /* ===============================================
    Question Card Styles (AskUserQuestion)
    =============================================== */
