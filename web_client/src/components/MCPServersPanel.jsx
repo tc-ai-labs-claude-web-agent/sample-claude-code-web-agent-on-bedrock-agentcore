@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Server, RefreshCw, ChevronRight, ChevronDown, Terminal, Plus, Trash2 } from 'lucide-react'
+import { Server, RefreshCw, ChevronRight, ChevronDown, Plus, Trash2 } from 'lucide-react'
 import { createAPIClient } from '../api/client'
 import { getAgentCoreSessionId } from '../utils/authUtils'
 
@@ -457,7 +457,6 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
                     >
                       <div className="mcp-server-name">
                         {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                        <Terminal size={14} />
                         <span>{name}</span>
                       </div>
                       <span className="mcp-server-type">{config.type}</span>
