@@ -96,17 +96,14 @@ async def send_message_stream(session_id: str, request: SendMessageRequest):
         Server-Sent Events stream with real-time updates
     """
     manager = get_session_manager()
-    session = await manager.get_session(session_id)
 
-    # Check and update model if provided and different
-    if request.model and request.model != session.model:
-        print(f"[Messages] Updating model: {session.model} → {request.model}")
-        await session.set_model(request.model)
-
-    # Check and update MCP servers if provided and different
-    if request.mcp_server_ids is not None and request.mcp_server_ids != session.mcp_server_ids:
-        print(f"[Messages] Updating MCP servers: {session.mcp_server_ids} → {request.mcp_server_ids}")
-        await manager.update_mcp_servers(session_id, request.mcp_server_ids)
+    # Get session and ensure model and MCP servers match request
+    # This will automatically reconnect if configuration changed
+    session = await manager.get_or_ensure_session(
+        session_id,
+        model=request.model,
+        mcp_server_ids=request.mcp_server_ids
+    )
 
     async def event_generator():
         """Generate SSE events from the agent response."""

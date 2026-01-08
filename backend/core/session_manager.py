@@ -411,6 +411,64 @@ class SessionManager:
         self.sessions[new_session_id] = session
         print(f"[SessionManager] Updated session ID: {old_session_id} → {new_session_id}")
 
+    async def get_or_ensure_session(
+        self,
+        session_id: str,
+        model: Optional[str] = None,
+        mcp_server_ids: Optional[list[str]] = None,
+    ) -> AgentSession:
+        """
+        Get session and ensure model and MCP servers match the request.
+
+        If model or mcp_server_ids are provided and differ from current session,
+        the session will be disconnected and reconnected with new configuration.
+
+        Args:
+            session_id: The session ID
+            model: Optional model to ensure
+            mcp_server_ids: Optional MCP server IDs to ensure
+
+        Returns:
+            The AgentSession instance with correct configuration
+
+        Raises:
+            HTTPException: If session not found
+        """
+        # Get the session (may auto-resume if not in memory)
+        session = await self.get_session(session_id)
+
+        needs_reconnect = False
+        config_changes = []
+
+        # Check if model needs to be updated
+        if model and model != session.model:
+            config_changes.append(f"model: {session.model} → {model}")
+            session.model = model
+            needs_reconnect = True
+
+        # Check if MCP servers need to be updated
+        if mcp_server_ids is not None and mcp_server_ids != session.mcp_server_ids:
+            config_changes.append(f"mcp_servers: {session.mcp_server_ids} → {mcp_server_ids}")
+            session.mcp_server_ids = mcp_server_ids
+            needs_reconnect = True
+
+        # Reconnect if configuration changed
+        if needs_reconnect:
+            print(f"[SessionManager] Configuration changed for session {session_id}:")
+            for change in config_changes:
+                print(f"[SessionManager]   - {change}")
+            print(f"[SessionManager] Reconnecting session with new configuration...")
+
+            # Disconnect old client
+            await session.disconnect()
+
+            # Reconnect with new configuration
+            await session.connect(resume_session_id=session_id)
+
+            print(f"[SessionManager] Session {session_id} reconnected successfully")
+
+        return session
+
     async def update_mcp_servers(self, session_id: str, mcp_server_ids: list[str]) -> str:
         """
         Update MCP servers for an active session by recreating the SDK client.
