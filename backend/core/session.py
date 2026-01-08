@@ -394,7 +394,11 @@ class AgentSession:
         self.message_count += 1
 
         # Send message - SDK accepts Union[str, UserMessage]
-        # If message is a dict with 'role' and 'content', it's a UserMessage format
+        # If message is a dict with 'role' and 'content', construct UserMessage object
+        if isinstance(message, dict):
+            # Convert dict to UserMessage object
+            message = UserMessage(**message)
+
         await self.client.query(message)
 
         # Collect response
@@ -456,6 +460,11 @@ class AgentSession:
         }
 
         # Send message - SDK accepts Union[str, UserMessage]
+        # If message is a dict with 'role' and 'content', construct UserMessage object
+        if isinstance(message, dict):
+            # Convert dict to UserMessage object
+            message = UserMessage(**message)
+
         await self.client.query(message)
 
         # Track last reported permission to avoid duplicates

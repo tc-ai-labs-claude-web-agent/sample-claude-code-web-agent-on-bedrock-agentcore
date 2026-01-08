@@ -116,7 +116,7 @@ class SendMessageRequest(BaseModel):
 
 ### 5. Backend - Session (`backend/core/session.py`)
 
-Updated `send_message` and `send_message_stream` to accept both formats:
+Updated `send_message` and `send_message_stream` to accept both formats and convert dict to UserMessage object:
 
 ```python
 async def send_message(self, message: str | dict) -> SendMessageResponse:
@@ -136,9 +136,15 @@ async def send_message(self, message: str | dict) -> SendMessageResponse:
     self.message_count += 1
 
     # Send message - SDK accepts Union[str, UserMessage]
-    # If message is a dict with 'role' and 'content', it's a UserMessage format
+    # If message is a dict with 'role' and 'content', construct UserMessage object
+    if isinstance(message, dict):
+        # Convert dict to UserMessage object
+        message = UserMessage(**message)
+
     await self.client.query(message)
 ```
+
+**Important**: The SDK requires a proper `UserMessage` object, not just a dict. We construct it using `UserMessage(**message)` when receiving a dict from the API.
 
 ## Message Flow
 
