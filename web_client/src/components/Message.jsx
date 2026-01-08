@@ -48,7 +48,7 @@ function Message({ message, onPermissionRespond, onQuestionAnswer }) {
         <div className="message tool-use tool-question">
           <QuestionCard
             questions={toolInput.questions}
-            onSubmitAnswers={(answers) => onQuestionAnswer(toolUseId, answers)}
+            onSubmitAnswers={(answers) => onQuestionAnswer(toolUseId, answers, toolInput.questions)}
           />
         </div>
       )

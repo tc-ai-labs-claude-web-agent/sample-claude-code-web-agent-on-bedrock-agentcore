@@ -374,12 +374,12 @@ class AgentSession:
         if self.permission_event:
             self.permission_event.set()
 
-    async def send_message(self, message: str) -> SendMessageResponse:
+    async def send_message(self, message: str | dict) -> SendMessageResponse:
         """
         Send a message and get the response.
 
         Args:
-            message: The user's message
+            message: The user's message (string or structured UserMessage dict)
 
         Returns:
             SendMessageResponse with assistant's reply
@@ -393,7 +393,8 @@ class AgentSession:
         self.last_activity = datetime.now(timezone.utc)
         self.message_count += 1
 
-        # Send message
+        # Send message - SDK accepts Union[str, UserMessage]
+        # If message is a dict with 'role' and 'content', it's a UserMessage format
         await self.client.query(message)
 
         # Collect response
@@ -428,12 +429,12 @@ class AgentSession:
             num_turns=num_turns,
         )
 
-    async def send_message_stream(self, message: str):
+    async def send_message_stream(self, message: str | dict):
         """
         Send a message and stream the response in real-time.
 
         Args:
-            message: The user's message
+            message: The user's message (string or structured UserMessage dict)
 
         Yields:
             Dictionary events with type and data for each step
@@ -454,7 +455,7 @@ class AgentSession:
             "message": message
         }
 
-        # Send message
+        # Send message - SDK accepts Union[str, UserMessage]
         await self.client.query(message)
 
         # Track last reported permission to avoid duplicates

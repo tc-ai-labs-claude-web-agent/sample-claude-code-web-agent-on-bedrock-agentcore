@@ -34,7 +34,7 @@ class CreateSessionResponse(BaseModel):
 class SendMessageRequest(BaseModel):
     """Request to send a message in a session."""
 
-    message: str
+    message: str | dict[str, Any]  # Can be string or structured message (e.g., with tool_result)
 
 
 class MessageBlock(BaseModel):

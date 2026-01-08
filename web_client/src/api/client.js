@@ -186,6 +186,34 @@ class DirectAPIClient {
     return response.json()
   }
 
+  async sendToolResult(sessionId, toolResultMessage) {
+    const authHeaders = await getAuthHeaders()
+    const response = await fetch(`${this.baseUrl}/sessions/${sessionId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders
+      },
+      body: JSON.stringify({
+        message: {
+          role: 'user',
+          content: [
+            {
+              type: 'tool_result',
+              tool_use_id: toolResultMessage.tool_use_id,
+              content: toolResultMessage.content
+            }
+          ]
+        }
+      })
+    })
+    handleFetchResponse(response)
+    if (!response.ok) {
+      throw new Error('Failed to send tool result')
+    }
+    return response.json()
+  }
+
   async deleteSession(sessionId) {
     const authHeaders = await getAuthHeaders()
     const response = await fetch(`${this.baseUrl}/sessions/${sessionId}`, {
@@ -1037,6 +1065,26 @@ class InvocationsAPIClient {
         request_id: requestId,
         allowed: allowed,
         apply_suggestions: applySuggestions
+      },
+      { session_id: sessionId }
+    )
+  }
+
+  async sendToolResult(sessionId, toolResultMessage) {
+    return this._invoke(
+      '/sessions/{session_id}/messages',
+      'POST',
+      {
+        message: {
+          role: 'user',
+          content: [
+            {
+              type: 'tool_result',
+              tool_use_id: toolResultMessage.tool_use_id,
+              content: toolResultMessage.content
+            }
+          ]
+        }
       },
       { session_id: sessionId }
     )
