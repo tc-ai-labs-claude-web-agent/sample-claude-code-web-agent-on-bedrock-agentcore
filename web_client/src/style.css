@@ -549,7 +549,7 @@ body {
     font-family: inherit;
     resize: none;
     transition: border-color 0.2s;
-    min-height: 60px;
+    min-height: 90px;
 }
 
 .input-controls textarea:focus {

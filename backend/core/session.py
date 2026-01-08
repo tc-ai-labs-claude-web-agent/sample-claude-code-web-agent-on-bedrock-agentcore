@@ -179,6 +179,8 @@ class AgentSession:
             "ExitPlanMode",
             # MCP resources
             "ListMcpResourcesTool", "ReadMcpResourceTool",
+            # MCP tools (wildcard pattern for all MCP server tools)
+            "mcp__*",
         ]
 
         # Read from environment variable (comma-separated list)
