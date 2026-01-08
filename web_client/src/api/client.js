@@ -613,7 +613,7 @@ class DirectAPIClient {
     return response.json()
   }
 
-  async addMCPServer(name, type, command, args, env) {
+  async addMCPServer(name, type, command, args, env, url) {
     const authHeaders = await getAuthHeaders()
     const response = await fetch(`${this.baseUrl}/mcp-servers`, {
       method: 'POST',
@@ -626,7 +626,8 @@ class DirectAPIClient {
         type,
         command,
         args,
-        env
+        env,
+        url
       })
     })
     if (!response.ok) {
@@ -916,13 +917,14 @@ class InvocationsAPIClient {
     return this._invoke('/mcp-servers', 'GET')
   }
 
-  async addMCPServer(name, type, command, args, env) {
+  async addMCPServer(name, type, command, args, env, url) {
     return this._invoke('/mcp-servers', 'POST', {
       name,
       type,
       command,
       args,
-      env
+      env,
+      url
     })
   }
 

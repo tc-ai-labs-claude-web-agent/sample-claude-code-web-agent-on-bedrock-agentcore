@@ -218,12 +218,19 @@ class CreateProjectResponse(BaseModel):
 
 
 class MCPServer(BaseModel):
-    """MCP server configuration."""
+    """MCP server configuration.
 
-    type: str  # "stdio" or other types
-    command: str
-    args: list[str]
-    env: dict[str, str]
+    Three connection types:
+    - stdio: Local process via stdin/stdout (requires command, args, env)
+    - sse: Server-Sent Events remote service (requires url)
+    - http: HTTP remote service (requires url)
+    """
+
+    type: str  # "stdio", "sse", or "http"
+    command: Optional[str] = None  # Required for stdio
+    args: Optional[list[str]] = None  # Required for stdio
+    env: Optional[dict[str, str]] = None  # Optional for stdio
+    url: Optional[str] = None  # Required for sse and http
 
 
 class ListMCPServersResponse(BaseModel):
@@ -235,13 +242,20 @@ class ListMCPServersResponse(BaseModel):
 
 
 class AddMCPServerRequest(BaseModel):
-    """Request to add a new MCP server."""
+    """Request to add a new MCP server.
+
+    Field requirements by type:
+    - stdio: name, type, command, args (optional: env)
+    - sse: name, type, url
+    - http: name, type, url
+    """
 
     name: str
     type: str
-    command: str
-    args: list[str]
-    env: dict[str, str]
+    command: Optional[str] = None
+    args: Optional[list[str]] = None
+    env: Optional[dict[str, str]] = None
+    url: Optional[str] = None
 
 
 class AddMCPServerResponse(BaseModel):

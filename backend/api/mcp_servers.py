@@ -63,11 +63,13 @@ async def list_mcp_servers():
         servers = {}
         for name, config in mcp_servers_raw.items():
             try:
+                server_type = config.get('type', 'stdio')
                 servers[name] = MCPServer(
-                    type=config.get('type', 'stdio'),
-                    command=config.get('command', ''),
-                    args=config.get('args', []),
-                    env=config.get('env', {})
+                    type=server_type,
+                    command=config.get('command'),
+                    args=config.get('args'),
+                    env=config.get('env'),
+                    url=config.get('url')
                 )
             except Exception as e:
                 logger.error(f"Failed to parse MCP server '{name}': {str(e)}")
@@ -102,6 +104,11 @@ async def add_mcp_server(request: AddMCPServerRequest):
     Creates the config file if it doesn't exist, then adds the new server
     configuration.
 
+    Supports three connection types:
+    - stdio: Local process (requires command, args optional, env optional)
+    - sse: Server-Sent Events remote service (requires url)
+    - http: HTTP remote service (requires url)
+
     Args:
         request: AddMCPServerRequest containing server configuration
 
@@ -109,10 +116,29 @@ async def add_mcp_server(request: AddMCPServerRequest):
         AddMCPServerResponse with operation status
 
     Raises:
-        HTTPException: If server name already exists or operation fails
+        HTTPException: If server name already exists, validation fails, or operation fails
     """
     mcp_config_path = "/workspace/.mcp.json"
-    logger.info(f"Adding MCP server '{request.name}' to {mcp_config_path}")
+    logger.info(f"Adding MCP server '{request.name}' (type: {request.type}) to {mcp_config_path}")
+
+    # Validate required fields based on type
+    if request.type == "stdio":
+        if not request.command:
+            raise HTTPException(
+                status_code=400,
+                detail="'command' is required for stdio type"
+            )
+    elif request.type in ["sse", "http"]:
+        if not request.url:
+            raise HTTPException(
+                status_code=400,
+                detail=f"'url' is required for {request.type} type"
+            )
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid type '{request.type}'. Must be 'stdio', 'sse', or 'http'"
+        )
 
     config_file = Path(mcp_config_path)
 
@@ -135,13 +161,18 @@ async def add_mcp_server(request: AddMCPServerRequest):
                 detail=f"MCP server '{request.name}' already exists"
             )
 
+        # Build server config based on type
+        server_config = {"type": request.type}
+
+        if request.type == "stdio":
+            server_config["command"] = request.command
+            server_config["args"] = request.args if request.args else []
+            server_config["env"] = request.env if request.env else {}
+        elif request.type in ["sse", "http"]:
+            server_config["url"] = request.url
+
         # Add new server
-        config_data["mcpServers"][request.name] = {
-            "type": request.type,
-            "command": request.command,
-            "args": request.args,
-            "env": request.env
-        }
+        config_data["mcpServers"][request.name] = server_config
 
         # Ensure parent directory exists
         config_file.parent.mkdir(parents=True, exist_ok=True)

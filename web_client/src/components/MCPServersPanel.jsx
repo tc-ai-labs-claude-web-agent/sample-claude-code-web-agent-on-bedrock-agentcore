@@ -22,7 +22,8 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
     type: 'stdio',
     command: '',
     args: [],
-    env: {}
+    env: {},
+    url: ''
   })
   const [newArg, setNewArg] = useState('')
   const [newEnvKey, setNewEnvKey] = useState('')
@@ -104,9 +105,23 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
 
   const handleAddServer = async (e) => {
     e.preventDefault()
-    if (!newServer.name.trim() || !newServer.command.trim()) {
-      alert('Name and command are required')
+
+    // Validate based on type
+    if (!newServer.name.trim()) {
+      alert('Server name is required')
       return
+    }
+
+    if (newServer.type === 'stdio') {
+      if (!newServer.command.trim()) {
+        alert('Command is required for stdio type')
+        return
+      }
+    } else if (newServer.type === 'sse' || newServer.type === 'http') {
+      if (!newServer.url.trim()) {
+        alert(`URL is required for ${newServer.type} type`)
+        return
+      }
     }
 
     setAdding(true)
@@ -114,9 +129,10 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
       await apiClientRef.current.addMCPServer(
         newServer.name.trim(),
         newServer.type,
-        newServer.command.trim(),
+        newServer.command.trim() || null,
         newServer.args,
-        newServer.env
+        newServer.env,
+        newServer.url.trim() || null
       )
 
       // Reset form
@@ -125,7 +141,8 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
         type: 'stdio',
         command: '',
         args: [],
-        env: {}
+        env: {},
+        url: ''
       })
       setNewArg('')
       setNewEnvKey('')
@@ -245,23 +262,27 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
                 onChange={(e) => setNewServer(prev => ({ ...prev, type: e.target.value }))}
                 disabled={adding}
               >
-                <option value="stdio">stdio</option>
+                <option value="stdio">stdio - Local process</option>
+                <option value="sse">sse - Server-Sent Events</option>
+                <option value="http">http - HTTP service</option>
               </select>
             </div>
 
-            <div className="form-row">
-              <input
-                type="text"
-                placeholder="Command (e.g., npx)"
-                value={newServer.command}
-                onChange={(e) => setNewServer(prev => ({ ...prev, command: e.target.value }))}
-                disabled={adding}
-                required
-              />
-            </div>
+            {newServer.type === 'stdio' ? (
+              <>
+                <div className="form-row">
+                  <input
+                    type="text"
+                    placeholder="Command (e.g., npx)"
+                    value={newServer.command}
+                    onChange={(e) => setNewServer(prev => ({ ...prev, command: e.target.value }))}
+                    disabled={adding}
+                    required
+                  />
+                </div>
 
-            <div className="form-section">
-              <label>Arguments</label>
+                <div className="form-section">
+                  <label>Arguments</label>
               <div className="form-list">
                 {newServer.args.map((arg, idx) => (
                   <div key={idx} className="form-list-item">
@@ -297,57 +318,75 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
               </div>
             </div>
 
-            <div className="form-section">
-              <label>Environment Variables</label>
-              <div className="form-list">
-                {Object.entries(newServer.env).map(([key, value]) => (
-                  <div key={key} className="form-list-item">
-                    <code>{key}={value}</code>
-                    <button
-                      type="button"
-                      className="btn-icon btn-small"
-                      onClick={() => removeEnv(key)}
-                      disabled={adding}
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                <div className="form-section">
+                  <label>Environment Variables (Optional)</label>
+                  <div className="form-list">
+                    {Object.entries(newServer.env).map(([key, value]) => (
+                      <div key={key} className="form-list-item">
+                        <code>{key}={value}</code>
+                        <button
+                          type="button"
+                          className="btn-icon btn-small"
+                          onClick={() => removeEnv(key)}
+                          disabled={adding}
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    ))}
+                    <div className="form-list-add">
+                      <input
+                        type="text"
+                        placeholder="Key"
+                        value={newEnvKey}
+                        onChange={(e) => setNewEnvKey(e.target.value)}
+                        disabled={adding}
+                        style={{ flex: '1' }}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Value"
+                        value={newEnvValue}
+                        onChange={(e) => setNewEnvValue(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addEnv())}
+                        disabled={adding}
+                        style={{ flex: '1' }}
+                      />
+                      <button
+                        type="button"
+                        className="btn-secondary btn-small"
+                        onClick={addEnv}
+                        disabled={adding || !newEnvKey.trim()}
+                      >
+                        Add
+                      </button>
+                    </div>
                   </div>
-                ))}
-                <div className="form-list-add">
-                  <input
-                    type="text"
-                    placeholder="Key"
-                    value={newEnvKey}
-                    onChange={(e) => setNewEnvKey(e.target.value)}
-                    disabled={adding}
-                    style={{ flex: '1' }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Value"
-                    value={newEnvValue}
-                    onChange={(e) => setNewEnvValue(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addEnv())}
-                    disabled={adding}
-                    style={{ flex: '1' }}
-                  />
-                  <button
-                    type="button"
-                    className="btn-secondary btn-small"
-                    onClick={addEnv}
-                    disabled={adding || !newEnvKey.trim()}
-                  >
-                    Add
-                  </button>
                 </div>
+              </>
+            ) : (
+              <div className="form-row">
+                <input
+                  type="url"
+                  placeholder="URL (e.g., http://localhost:3000/sse)"
+                  value={newServer.url}
+                  onChange={(e) => setNewServer(prev => ({ ...prev, url: e.target.value }))}
+                  disabled={adding}
+                  required
+                />
               </div>
-            </div>
+            )}
 
             <div className="form-actions">
               <button
                 type="submit"
                 className="btn-primary btn-small"
-                disabled={adding || !newServer.name.trim() || !newServer.command.trim()}
+                disabled={
+                  adding ||
+                  !newServer.name.trim() ||
+                  (newServer.type === 'stdio' && !newServer.command.trim()) ||
+                  ((newServer.type === 'sse' || newServer.type === 'http') && !newServer.url.trim())
+                }
               >
                 {adding ? 'Adding...' : 'Add Server'}
               </button>
@@ -361,7 +400,8 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
                     type: 'stdio',
                     command: '',
                     args: [],
-                    env: {}
+                    env: {},
+                    url: ''
                   })
                   setNewArg('')
                   setNewEnvKey('')
@@ -434,33 +474,48 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
 
                   {isExpanded && (
                     <div className="mcp-server-details">
-                      <div className="mcp-server-detail-row">
-                        <span className="mcp-server-detail-label">Command:</span>
-                        <code>{config.command}</code>
-                      </div>
+                      {config.type === 'stdio' ? (
+                        <>
+                          {config.command && (
+                            <div className="mcp-server-detail-row">
+                              <span className="mcp-server-detail-label">Command:</span>
+                              <code>{config.command}</code>
+                            </div>
+                          )}
 
-                      {config.args && config.args.length > 0 && (
-                        <div className="mcp-server-detail-row">
-                          <span className="mcp-server-detail-label">Arguments:</span>
-                          <div className="mcp-server-args">
-                            {config.args.map((arg, idx) => (
-                              <code key={idx}>{arg}</code>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {config.env && Object.keys(config.env).length > 0 && (
-                        <div className="mcp-server-detail-row">
-                          <span className="mcp-server-detail-label">Environment:</span>
-                          <div className="mcp-server-env">
-                            {Object.entries(config.env).map(([key, value]) => (
-                              <div key={key} className="mcp-server-env-var">
-                                <code>{key}={value}</code>
+                          {config.args && config.args.length > 0 && (
+                            <div className="mcp-server-detail-row">
+                              <span className="mcp-server-detail-label">Arguments:</span>
+                              <div className="mcp-server-args">
+                                {config.args.map((arg, idx) => (
+                                  <code key={idx}>{arg}</code>
+                                ))}
                               </div>
-                            ))}
-                          </div>
-                        </div>
+                            </div>
+                          )}
+
+                          {config.env && Object.keys(config.env).length > 0 && (
+                            <div className="mcp-server-detail-row">
+                              <span className="mcp-server-detail-label">Environment:</span>
+                              <div className="mcp-server-env">
+                                {Object.entries(config.env).map(([key, value]) => (
+                                  <div key={key} className="mcp-server-env-var">
+                                    <code>{key}={value}</code>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {config.url && (
+                            <div className="mcp-server-detail-row">
+                              <span className="mcp-server-detail-label">URL:</span>
+                              <code>{config.url}</code>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   )}
