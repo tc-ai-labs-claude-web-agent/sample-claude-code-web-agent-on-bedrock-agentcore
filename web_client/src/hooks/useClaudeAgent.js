@@ -458,6 +458,25 @@ export function useClaudeAgent(initialServerUrl = 'http://127.0.0.1:8000', userI
     }
   }, [sessionId, addErrorMessage])
 
+  // Submit answers to AskUserQuestion
+  const submitQuestionAnswers = useCallback(async (toolUseId, answers) => {
+    if (!sessionId) return
+
+    try {
+      console.log('Submitting question answers:', { toolUseId, answers })
+
+      // Send the answers as a user message in JSON format
+      // The format expected by Claude Agent SDK for AskUserQuestion responses
+      const answerMessage = JSON.stringify(answers)
+
+      await sendMessage(answerMessage)
+
+      console.log('Question answers submitted successfully')
+    } catch (error) {
+      addErrorMessage(`Failed to submit answers: ${error.message}`)
+    }
+  }, [sessionId, sendMessage, addErrorMessage])
+
   // Load existing session
   const loadSession = useCallback(async (existingSessionId, settings = null) => {
     try {
@@ -650,6 +669,7 @@ export function useClaudeAgent(initialServerUrl = 'http://127.0.0.1:8000', userI
     clearSession,
     sendMessage,
     respondToPermission,
+    submitQuestionAnswers,
     loadSession,
     retrySession,
     interruptSession

@@ -9,6 +9,7 @@ function ChatContainer({
   onDisconnect,
   onClearSession,
   onPermissionRespond,
+  onQuestionAnswer,
   sessionError,
   onRetrySession,
   currentModel,
@@ -195,7 +196,12 @@ function ChatContainer({
       {/* Messages */}
       <div className="messages">
         {messages.map((msg, index) => (
-          <Message key={index} message={msg} onPermissionRespond={onPermissionRespond} />
+          <Message
+            key={index}
+            message={msg}
+            onPermissionRespond={onPermissionRespond}
+            onQuestionAnswer={onQuestionAnswer}
+          />
         ))}
         <div ref={messagesEndRef} />
       </div>

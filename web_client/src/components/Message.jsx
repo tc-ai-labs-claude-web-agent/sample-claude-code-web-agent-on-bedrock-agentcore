@@ -1,7 +1,8 @@
 import { Wrench, CheckCircle, XCircle, ShieldAlert, Zap } from 'lucide-react'
+import QuestionCard from './QuestionCard'
 
-function Message({ message, onPermissionRespond }) {
-  const { type, role, content, toolName, toolInput, isError, permission } = message
+function Message({ message, onPermissionRespond, onQuestionAnswer }) {
+  const { type, role, content, toolName, toolInput, toolUseId, isError, permission } = message
 
   const formatContent = (text) => {
     if (!text) return ''
@@ -41,6 +42,19 @@ function Message({ message, onPermissionRespond }) {
   }
 
   if (type === 'tool') {
+    // Special handling for AskUserQuestion tool
+    if (toolName === 'AskUserQuestion' && toolInput && toolInput.questions) {
+      return (
+        <div className="message tool-use tool-question">
+          <QuestionCard
+            questions={toolInput.questions}
+            onSubmitAnswers={(answers) => onQuestionAnswer(toolUseId, answers)}
+          />
+        </div>
+      )
+    }
+
+    // Default tool display
     return (
       <div className="message tool-use">
         <div className="message-header">

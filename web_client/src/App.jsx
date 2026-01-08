@@ -141,6 +141,7 @@ function AppContent() {
     clearSession,
     sendMessage,
     respondToPermission,
+    submitQuestionAnswers,
     loadSession,
     retrySession,
     interruptSession
@@ -892,6 +893,7 @@ function AppContent() {
               onDisconnect={disconnect}
               onClearSession={clearSession}
               onPermissionRespond={respondToPermission}
+              onQuestionAnswer={submitQuestionAnswers}
               sessionError={sessionError}
               onRetrySession={retrySession}
               currentModel={settings.model}
