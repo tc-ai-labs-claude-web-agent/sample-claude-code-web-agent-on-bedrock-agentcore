@@ -232,3 +232,29 @@ class ListMCPServersResponse(BaseModel):
     servers: dict[str, MCPServer]
     mcp_config_path: str
     exists: bool
+
+
+class AddMCPServerRequest(BaseModel):
+    """Request to add a new MCP server."""
+
+    name: str
+    type: str
+    command: str
+    args: list[str]
+    env: dict[str, str]
+
+
+class AddMCPServerResponse(BaseModel):
+    """Response from adding MCP server."""
+
+    status: str
+    message: str
+    server_name: str
+
+
+class DeleteMCPServerResponse(BaseModel):
+    """Response from deleting MCP server."""
+
+    status: str
+    message: str
+    server_name: str

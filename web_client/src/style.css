@@ -3382,6 +3382,90 @@ body {
   gap: 8px;
 }
 
+.mcp-add-form {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.mcp-add-form .form-row {
+  margin-bottom: 12px;
+}
+
+.mcp-add-form input,
+.mcp-add-form select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 14px;
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.mcp-add-form input:focus,
+.mcp-add-form select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.mcp-add-form .form-section {
+  margin-bottom: 16px;
+}
+
+.mcp-add-form .form-section label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.mcp-add-form .form-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mcp-add-form .form-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.mcp-add-form .form-list-item code {
+  flex: 1;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mcp-add-form .form-list-add {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.mcp-add-form .form-list-add input {
+  margin-bottom: 0;
+}
+
+.mcp-add-form .form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
 .mcp-server-item {
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -3393,6 +3477,12 @@ body {
   border-color: var(--primary-color);
 }
 
+.mcp-server-header-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .mcp-server-header {
   display: flex;
   align-items: center;
@@ -3401,7 +3491,7 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  width: 100%;
+  flex: 1;
   text-align: left;
   color: var(--text-primary);
   font-size: 14px;
@@ -3410,6 +3500,16 @@ body {
 
 .mcp-server-header:hover {
   background-color: var(--bg-color);
+}
+
+.mcp-delete-btn {
+  margin-right: 8px;
+  color: var(--danger-color);
+}
+
+.mcp-delete-btn:hover {
+  background-color: var(--danger-color);
+  color: white;
 }
 
 .mcp-server-name {

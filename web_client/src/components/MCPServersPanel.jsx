@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Server, RefreshCw, ChevronRight, ChevronDown, Terminal } from 'lucide-react'
+import { Server, RefreshCw, ChevronRight, ChevronDown, Terminal, Plus, Trash2 } from 'lucide-react'
 import { createAPIClient } from '../api/client'
 import { getAgentCoreSessionId } from '../utils/authUtils'
 
@@ -10,8 +10,23 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [expandedServers, setExpandedServers] = useState(new Set())
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [adding, setAdding] = useState(false)
+  const [deleting, setDeleting] = useState(null)
   const apiClientRef = useRef(null)
   const previousActiveRef = useRef(false)
+
+  // Form state for adding new server
+  const [newServer, setNewServer] = useState({
+    name: '',
+    type: 'stdio',
+    command: '',
+    args: [],
+    env: {}
+  })
+  const [newArg, setNewArg] = useState('')
+  const [newEnvKey, setNewEnvKey] = useState('')
+  const [newEnvValue, setNewEnvValue] = useState('')
 
   // Create API client
   useEffect(() => {
@@ -87,6 +102,100 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
     })
   }
 
+  const handleAddServer = async (e) => {
+    e.preventDefault()
+    if (!newServer.name.trim() || !newServer.command.trim()) {
+      alert('Name and command are required')
+      return
+    }
+
+    setAdding(true)
+    try {
+      await apiClientRef.current.addMCPServer(
+        newServer.name.trim(),
+        newServer.type,
+        newServer.command.trim(),
+        newServer.args,
+        newServer.env
+      )
+
+      // Reset form
+      setNewServer({
+        name: '',
+        type: 'stdio',
+        command: '',
+        args: [],
+        env: {}
+      })
+      setNewArg('')
+      setNewEnvKey('')
+      setNewEnvValue('')
+      setShowAddForm(false)
+
+      // Reload servers
+      await loadMCPServers()
+    } catch (err) {
+      console.error('Failed to add MCP server:', err)
+      alert(`Failed to add server: ${err.message}`)
+    } finally {
+      setAdding(false)
+    }
+  }
+
+  const handleDeleteServer = async (serverName) => {
+    if (!confirm(`Delete MCP server "${serverName}"?`)) {
+      return
+    }
+
+    setDeleting(serverName)
+    try {
+      await apiClientRef.current.deleteMCPServer(serverName)
+      // Reload servers
+      await loadMCPServers()
+    } catch (err) {
+      console.error('Failed to delete MCP server:', err)
+      alert(`Failed to delete server: ${err.message}`)
+    } finally {
+      setDeleting(null)
+    }
+  }
+
+  const addArg = () => {
+    if (newArg.trim()) {
+      setNewServer(prev => ({
+        ...prev,
+        args: [...prev.args, newArg.trim()]
+      }))
+      setNewArg('')
+    }
+  }
+
+  const removeArg = (index) => {
+    setNewServer(prev => ({
+      ...prev,
+      args: prev.args.filter((_, i) => i !== index)
+    }))
+  }
+
+  const addEnv = () => {
+    if (newEnvKey.trim()) {
+      setNewServer(prev => ({
+        ...prev,
+        env: { ...prev.env, [newEnvKey.trim()]: newEnvValue.trim() }
+      }))
+      setNewEnvKey('')
+      setNewEnvValue('')
+    }
+  }
+
+  const removeEnv = (key) => {
+    setNewServer(prev => {
+      const newEnv = { ...prev.env }
+      delete newEnv[key]
+      return { ...prev, env: newEnv }
+    })
+  }
+
   const serverCount = Object.keys(mcpServers).length
 
   return (
@@ -105,8 +214,167 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
           >
             <RefreshCw size={14} className={loading ? 'spinning' : ''} />
           </button>
+          <button
+            className="btn-icon btn-small"
+            onClick={() => setShowAddForm(!showAddForm)}
+            disabled={disabled}
+            title="Add new MCP server"
+          >
+            <Plus size={14} />
+          </button>
         </div>
       </div>
+
+      {showAddForm && (
+        <div className="mcp-add-form">
+          <form onSubmit={handleAddServer}>
+            <div className="form-row">
+              <input
+                type="text"
+                placeholder="Server name (e.g., chrome-devtools)"
+                value={newServer.name}
+                onChange={(e) => setNewServer(prev => ({ ...prev, name: e.target.value }))}
+                disabled={adding}
+                required
+              />
+            </div>
+
+            <div className="form-row">
+              <select
+                value={newServer.type}
+                onChange={(e) => setNewServer(prev => ({ ...prev, type: e.target.value }))}
+                disabled={adding}
+              >
+                <option value="stdio">stdio</option>
+              </select>
+            </div>
+
+            <div className="form-row">
+              <input
+                type="text"
+                placeholder="Command (e.g., npx)"
+                value={newServer.command}
+                onChange={(e) => setNewServer(prev => ({ ...prev, command: e.target.value }))}
+                disabled={adding}
+                required
+              />
+            </div>
+
+            <div className="form-section">
+              <label>Arguments</label>
+              <div className="form-list">
+                {newServer.args.map((arg, idx) => (
+                  <div key={idx} className="form-list-item">
+                    <code>{arg}</code>
+                    <button
+                      type="button"
+                      className="btn-icon btn-small"
+                      onClick={() => removeArg(idx)}
+                      disabled={adding}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                ))}
+                <div className="form-list-add">
+                  <input
+                    type="text"
+                    placeholder="Add argument"
+                    value={newArg}
+                    onChange={(e) => setNewArg(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addArg())}
+                    disabled={adding}
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary btn-small"
+                    onClick={addArg}
+                    disabled={adding || !newArg.trim()}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-section">
+              <label>Environment Variables</label>
+              <div className="form-list">
+                {Object.entries(newServer.env).map(([key, value]) => (
+                  <div key={key} className="form-list-item">
+                    <code>{key}={value}</code>
+                    <button
+                      type="button"
+                      className="btn-icon btn-small"
+                      onClick={() => removeEnv(key)}
+                      disabled={adding}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                ))}
+                <div className="form-list-add">
+                  <input
+                    type="text"
+                    placeholder="Key"
+                    value={newEnvKey}
+                    onChange={(e) => setNewEnvKey(e.target.value)}
+                    disabled={adding}
+                    style={{ flex: '1' }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Value"
+                    value={newEnvValue}
+                    onChange={(e) => setNewEnvValue(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addEnv())}
+                    disabled={adding}
+                    style={{ flex: '1' }}
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary btn-small"
+                    onClick={addEnv}
+                    disabled={adding || !newEnvKey.trim()}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-actions">
+              <button
+                type="submit"
+                className="btn-primary btn-small"
+                disabled={adding || !newServer.name.trim() || !newServer.command.trim()}
+              >
+                {adding ? 'Adding...' : 'Add Server'}
+              </button>
+              <button
+                type="button"
+                className="btn-secondary btn-small"
+                onClick={() => {
+                  setShowAddForm(false)
+                  setNewServer({
+                    name: '',
+                    type: 'stdio',
+                    command: '',
+                    args: [],
+                    env: {}
+                  })
+                  setNewArg('')
+                  setNewEnvKey('')
+                  setNewEnvValue('')
+                }}
+                disabled={adding}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="mcp-servers-info">
         <small>Config: {mcpConfigPath}</small>
@@ -142,17 +410,27 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
               const isExpanded = expandedServers.has(name)
               return (
                 <div key={name} className="mcp-server-item">
-                  <button
-                    className="mcp-server-header"
-                    onClick={() => toggleServerExpanded(name)}
-                  >
-                    <div className="mcp-server-name">
-                      {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                      <Terminal size={14} />
-                      <span>{name}</span>
-                    </div>
-                    <span className="mcp-server-type">{config.type}</span>
-                  </button>
+                  <div className="mcp-server-header-row">
+                    <button
+                      className="mcp-server-header"
+                      onClick={() => toggleServerExpanded(name)}
+                    >
+                      <div className="mcp-server-name">
+                        {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                        <Terminal size={14} />
+                        <span>{name}</span>
+                      </div>
+                      <span className="mcp-server-type">{config.type}</span>
+                    </button>
+                    <button
+                      className="btn-icon btn-small mcp-delete-btn"
+                      onClick={() => handleDeleteServer(name)}
+                      disabled={deleting === name || disabled}
+                      title="Delete server"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
 
                   {isExpanded && (
                     <div className="mcp-server-details">

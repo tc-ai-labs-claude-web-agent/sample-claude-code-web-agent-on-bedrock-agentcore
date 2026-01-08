@@ -613,6 +613,42 @@ class DirectAPIClient {
     return response.json()
   }
 
+  async addMCPServer(name, type, command, args, env) {
+    const authHeaders = await getAuthHeaders()
+    const response = await fetch(`${this.baseUrl}/mcp-servers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders
+      },
+      body: JSON.stringify({
+        name,
+        type,
+        command,
+        args,
+        env
+      })
+    })
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.detail || 'Failed to add MCP server')
+    }
+    return response.json()
+  }
+
+  async deleteMCPServer(serverName) {
+    const authHeaders = await getAuthHeaders()
+    const response = await fetch(`${this.baseUrl}/mcp-servers/${encodeURIComponent(serverName)}`, {
+      method: 'DELETE',
+      headers: authHeaders
+    })
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.detail || 'Failed to delete MCP server')
+    }
+    return response.json()
+  }
+
   async completeGithubOAuthCallback(sessionId) {
     const authHeaders = await getAuthHeaders()
     const response = await fetch(`${this.baseUrl}/oauth/github/callback?session_id=${encodeURIComponent(sessionId)}`, {
@@ -878,6 +914,20 @@ class InvocationsAPIClient {
 
   async listMCPServers() {
     return this._invoke('/mcp-servers', 'GET')
+  }
+
+  async addMCPServer(name, type, command, args, env) {
+    return this._invoke('/mcp-servers', 'POST', {
+      name,
+      type,
+      command,
+      args,
+      env
+    })
+  }
+
+  async deleteMCPServer(serverName) {
+    return this._invoke('/mcp-servers/{server_name}', 'DELETE', null, { server_name: serverName })
   }
 
   async completeGithubOAuthCallback(sessionId) {

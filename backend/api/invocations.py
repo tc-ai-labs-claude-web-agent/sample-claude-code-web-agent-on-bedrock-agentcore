@@ -723,6 +723,23 @@ async def invocations(http_request: Request, request: dict[str, Any]):
             from .mcp_servers import list_mcp_servers
             return await list_mcp_servers()
 
+        elif path == "/mcp-servers" and method == "POST":
+            # Add MCP server
+            from .mcp_servers import add_mcp_server
+            from ..models.schemas import AddMCPServerRequest
+            req = AddMCPServerRequest(**payload)
+            return await add_mcp_server(req)
+
+        elif path.startswith("/mcp-servers/") and method == "DELETE":
+            # Delete MCP server
+            from .mcp_servers import delete_mcp_server
+            server_name = path_params.get("server_name")
+            if not server_name:
+                raise HTTPException(
+                    status_code=400, detail="Missing server_name in path_params"
+                )
+            return await delete_mcp_server(server_name)
+
         elif path == "/health" and method == "GET":
             # Health check - import here to avoid circular dependency
             from ..server import health_check
