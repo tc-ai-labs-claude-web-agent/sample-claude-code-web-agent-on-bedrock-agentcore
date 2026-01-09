@@ -11,7 +11,6 @@ from .schemas import (
     SendMessageResponse,
     SessionInfo,
     SessionStatus,
-    SetModelRequest,
     SetPermissionModeRequest,
 )
 
@@ -26,6 +25,5 @@ __all__ = [
     "SendMessageResponse",
     "SessionInfo",
     "SessionStatus",
-    "SetModelRequest",
     "SetPermissionModeRequest",
 ]

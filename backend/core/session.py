@@ -699,29 +699,6 @@ class AgentSession:
             if sync_manager:
                 asyncio.create_task(sync_manager.backup_after_task(self.user_id))
 
-    async def set_model(self, model: Optional[str]):
-        """
-        Change the model for this session.
-
-        Args:
-            model: Model name to use (None for default)
-
-        Raises:
-            HTTPException: If session not connected or SDK call fails
-        """
-        if not self.client or self.status != "connected":
-            raise HTTPException(status_code=400, detail="Session not connected")
-
-        try:
-            await self.client.set_model(model)
-            self.current_model = model
-            self.model = model  # Update tracked model for consistency
-            self.last_activity = datetime.now(timezone.utc)
-        except Exception as e:
-            raise HTTPException(
-                status_code=500, detail=f"Failed to set model: {str(e)}"
-            )
-
     async def interrupt(self):
         """
         Interrupt the current operation.

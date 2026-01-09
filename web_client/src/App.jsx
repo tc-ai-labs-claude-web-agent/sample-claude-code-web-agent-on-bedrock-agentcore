@@ -561,12 +561,8 @@ function AppContent() {
           connect(newSettings)
         }, 500)
       } else {
-        // Proxy mode unchanged, just update model via API
-        const agentCoreSessionId = await getAgentCoreSessionId(currentProject)
-        const apiClient = createAPIClient(settings.serverUrl, agentCoreSessionId)
-        await apiClient.setModel(sessionId, newModel)
-
-        // Update settings with new model
+        // Proxy mode unchanged, just update settings
+        // Model will be automatically updated on next message send
         const newSettings = {
           ...settings,
           model: newModel
@@ -574,7 +570,7 @@ function AppContent() {
 
         setSettings(newSettings)
 
-        console.log(`✓ Model changed to ${newModel} without restart`)
+        console.log(`✓ Model changed to ${newModel} (will take effect on next message)`)
       }
     } catch (error) {
       console.error('Failed to change model:', error)

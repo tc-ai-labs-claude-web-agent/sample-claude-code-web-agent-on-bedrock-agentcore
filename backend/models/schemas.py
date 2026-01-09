@@ -101,12 +101,6 @@ class SessionStatus(BaseModel):
     current_model: Optional[str] = None
 
 
-class SetModelRequest(BaseModel):
-    """Request to change the model for a session."""
-
-    model: Optional[str] = None  # None means use default model
-
-
 class SetPermissionModeRequest(BaseModel):
     """Request to change the permission mode for a session."""
 

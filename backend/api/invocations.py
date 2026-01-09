@@ -15,14 +15,12 @@ from ..models import (
     CreateSessionRequest,
     PermissionResponse,
     SendMessageRequest,
-    SetModelRequest,
     SetPermissionModeRequest,
 )
 from .messages import (
     get_session_status,
     interrupt_session,
     send_message,
-    set_model,
     set_permission_mode,
 )
 from .permissions import respond_to_permission
@@ -394,20 +392,6 @@ async def invocations(http_request: Request, request: dict[str, Any]):
                 )
             resp = PermissionResponse(**payload)
             return await respond_to_permission(session_id, resp)
-
-        elif (
-            path.startswith("/sessions/")
-            and path.endswith("/model")
-            and method == "POST"
-        ):
-            # Set model
-            session_id = path_params.get("session_id")
-            if not session_id:
-                raise HTTPException(
-                    status_code=400, detail="Missing session_id in path_params"
-                )
-            req = SetModelRequest(**payload)
-            return await set_model(session_id, req)
 
         elif (
             path.startswith("/sessions/")

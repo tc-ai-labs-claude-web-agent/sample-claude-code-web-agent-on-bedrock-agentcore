@@ -14,7 +14,6 @@ from ..models import (
     SendMessageRequest,
     SendMessageResponse,
     SessionStatus,
-    SetModelRequest,
     SetPermissionModeRequest,
 )
 
@@ -129,24 +128,6 @@ async def send_message_stream(session_id: str, request: SendMessageRequest):
             "X-Accel-Buffering": "no"  # Disable nginx buffering
         }
     )
-
-
-@router.post("/sessions/{session_id}/model")
-async def set_model(session_id: str, request: SetModelRequest):
-    """
-    Change the model for a session.
-
-    Args:
-        session_id: The session ID
-        request: Model change request
-
-    Returns:
-        Success message with new model
-    """
-    manager = get_session_manager()
-    session = await manager.get_session(session_id)
-    await session.set_model(request.model)
-    return {"status": "ok", "model": request.model}
 
 
 @router.post("/sessions/{session_id}/interrupt")

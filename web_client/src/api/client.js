@@ -245,23 +245,6 @@ class DirectAPIClient {
     return response.json()
   }
 
-  async setModel(sessionId, model) {
-    const authHeaders = await getAuthHeaders()
-    const response = await fetch(`${this.baseUrl}/sessions/${sessionId}/model`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders
-      },
-      body: JSON.stringify({ model })
-    })
-    handleFetchResponse(response)
-    if (!response.ok) {
-      throw new Error('Failed to set model')
-    }
-    return response.json()
-  }
-
   async interruptSession(sessionId) {
     const authHeaders = await getAuthHeaders()
     const response = await fetch(`${this.baseUrl}/sessions/${sessionId}/interrupt`, {
@@ -1207,15 +1190,6 @@ class InvocationsAPIClient {
   async closeAllSessions(cwd = null) {
     const payload = cwd ? { cwd } : {}
     return this._invoke('/sessions/close_all', 'POST', payload)
-  }
-
-  async setModel(sessionId, model) {
-    return this._invoke(
-      '/sessions/{session_id}/model',
-      'POST',
-      { model },
-      { session_id: sessionId }
-    )
   }
 
   async interruptSession(sessionId) {
