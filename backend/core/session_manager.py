@@ -456,9 +456,9 @@ class SessionManager:
                 session.model = model
                 needs_reconnect = True
             else:
-                print(f"[SessionManager] ✓ Model matches (no change needed)")
+                print(f"[SessionManager] ✓ Model matches: {session.model}")
         else:
-            print(f"[SessionManager] ○ No model specified in request (keeping current)")
+            print(f"[SessionManager] ○ No model specified in request (keeping current: {session.model})")
 
         # Check if MCP servers need to be updated
         if mcp_server_ids is not None:
@@ -468,9 +468,9 @@ class SessionManager:
                 session.mcp_server_ids = mcp_server_ids
                 needs_reconnect = True
             else:
-                print(f"[SessionManager] ✓ MCP servers match (no change needed)")
+                print(f"[SessionManager] ✓ MCP servers match: {session.mcp_server_ids}")
         else:
-            print(f"[SessionManager] ○ No MCP servers specified in request (keeping current)")
+            print(f"[SessionManager] ○ No MCP servers specified in request (keeping current: {session.mcp_server_ids})")
 
         # Reconnect if configuration changed
         if needs_reconnect:
