@@ -1,4 +1,4 @@
-import { Settings, Circle, Bot, LogOut, User, FolderOpen, Terminal, Folder, Github, XCircle } from 'lucide-react'
+import { Settings, Circle, Bot, LogOut, User, FolderOpen, Terminal, Folder, Github, XCircle, Moon, Sun } from 'lucide-react'
 
 const hideSettingsButton = import.meta.env.VITE_HIDE_SETTINGS_BUTTON === 'true'
 
@@ -17,7 +17,9 @@ function Header({
   githubAuthStatus,
   githubAuthMessage,
   onCloseProject,
-  closingProject
+  closingProject,
+  theme,
+  onThemeToggle
 }) {
   return (
     <header className="header">
@@ -60,6 +62,15 @@ function Header({
         >
           <Terminal size={18} />
         </button>
+        {onThemeToggle && (
+          <button
+            className="btn-icon theme-toggle-button"
+            onClick={onThemeToggle}
+            title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+        )}
         {onCloseProject && serverConnected && (
           <button
             className="btn-icon close-project-button"

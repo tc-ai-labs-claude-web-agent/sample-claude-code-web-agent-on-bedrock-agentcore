@@ -22,6 +22,7 @@ import { Loader2, ToolCase } from 'lucide-react'
 
 const SETTINGS_STORAGE_KEY = 'claude-agent-settings'
 const SERVER_DISCONNECTED_KEY = 'claude-agent-server-disconnected'
+const THEME_STORAGE_KEY = 'claude-agent-theme'
 
 // Read environment variables
 const hideSettingsButton = import.meta.env.VITE_HIDE_SETTINGS_BUTTON === 'true'
@@ -107,6 +108,17 @@ function AppContent() {
   const [githubAuthStatus, setGithubAuthStatus] = useState(null) // null | 'success' | 'pending' | 'error'
   const [githubAuthMessage, setGithubAuthMessage] = useState('')
 
+  // Theme state - load from localStorage on mount
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY)
+      return saved || 'light'
+    } catch (error) {
+      console.error('Failed to load theme:', error)
+      return 'light'
+    }
+  })
+
   // Server disconnect state - load from localStorage on mount
   const [serverDisconnected, setServerDisconnected] = useState(() => {
     try {
@@ -159,6 +171,16 @@ function AppContent() {
       console.error('Failed to save settings to localStorage:', error)
     }
   }, [settings])
+
+  // Save and apply theme whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme)
+      document.documentElement.setAttribute('data-theme', theme)
+    } catch (error) {
+      console.error('Failed to save theme:', error)
+    }
+  }, [theme])
 
   // Save server disconnect state to localStorage whenever it changes
   useEffect(() => {
@@ -471,6 +493,10 @@ function AppContent() {
     setServerDisconnected(false)
   }
 
+  const handleThemeToggle = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+  }
+
   const handleForceStopAgentCore = async () => {
     console.log('🛑 Force stopping AgentCore session...')
     console.log('⚠️  Warning: This will directly stop the AgentCore runtime session without closing active sessions')
@@ -741,6 +767,8 @@ function AppContent() {
         githubAuthMessage={githubAuthMessage}
         onCloseProject={handleDisconnectServer}
         closingProject={disconnecting}
+        theme={theme}
+        onThemeToggle={handleThemeToggle}
       />
 
       <div className="main-content">
