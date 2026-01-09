@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FolderOpen, Plus, RefreshCw, CheckCircle } from 'lucide-react'
+import { Plus, RefreshCw, CheckCircle, FolderOpen } from 'lucide-react'
 
 function ProjectPanel({
   projects,
@@ -43,10 +43,7 @@ function ProjectPanel({
   return (
     <div className="project-panel">
       <div className="project-panel-header">
-        <h2>
-          <FolderOpen size={18} />
-          Projects
-        </h2>
+        <h2>Projects</h2>
         <div className="project-panel-actions">
           <button
             className="btn-icon btn-small"

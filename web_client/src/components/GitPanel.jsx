@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { GitCommit, GitBranch, RefreshCw, Upload, FileText, Plus, Minus, Edit } from 'lucide-react'
+import { GitCommit, RefreshCw, Upload, FileText, Plus, Minus, Edit } from 'lucide-react'
 import { createAPIClient } from '../api/client'
 import { getAgentCoreSessionId } from '../utils/authUtils'
 
@@ -135,10 +135,7 @@ function GitPanel({ serverUrl, cwd, disabled, currentProject, isActive }) {
   return (
     <div className="git-panel">
       <div className="git-panel-header">
-        <h2>
-          <GitBranch size={20} />
-          Git
-        </h2>
+        <h2>Git</h2>
         <div className="git-panel-actions">
           {status && (
             <span className="git-branch-badge">

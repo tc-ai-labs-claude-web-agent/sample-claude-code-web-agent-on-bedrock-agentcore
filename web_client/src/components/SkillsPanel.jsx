@@ -8,7 +8,7 @@ export default function SkillsPanel({ serverUrl, disabled, isActive, currentProj
   return (
     <div className="skills-panel">
       <div className="panel-header">
-        <h3>Skills</h3>
+        <h2>Skills</h2>
       </div>
 
       <div className="panel-content">

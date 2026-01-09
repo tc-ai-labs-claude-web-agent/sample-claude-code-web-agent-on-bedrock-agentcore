@@ -218,10 +218,7 @@ function MCPServersPanel({ serverUrl, disabled, isActive, currentProject }) {
   return (
     <div className="mcp-servers-panel">
       <div className="mcp-servers-panel-header">
-        <h2>
-          <Server size={18} />
-          MCP Servers
-        </h2>
+        <h2>MCP Servers</h2>
         <div className="mcp-servers-panel-actions">
           <button
             className="btn-icon btn-small"
