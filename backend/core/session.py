@@ -400,8 +400,14 @@ class AgentSession:
         Returns:
             Permission result (allow or deny)
         """
+        print(f"\n[Permission] ========== permission_callback ==========")
+        print(f"[Permission] tool_name: {tool_name}")
+        print(f"[Permission] input_data: {input_data}")
+        print(f"[Permission] suggestions count: {len(context.suggestions)}")
+
         # Auto-allow all MCP tools (tools from MCP servers)
         if tool_name.startswith("mcp__"):
+            print(f"[Permission] ✓ Auto-allow MCP tool: {tool_name}")
             return PermissionResultAllow()
 
         # Auto-allow operations based on environment variable
@@ -414,9 +420,11 @@ class AgentSession:
             auto_allow_tools = ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 
         if tool_name in auto_allow_tools:
+            print(f"[Permission] ✓ Auto-allow core tool: {tool_name}")
             return PermissionResultAllow()
 
         # Create permission request
+        print(f"[Permission] ⚠ Requesting user approval for: {tool_name}")
         request_id = str(uuid.uuid4())
         self.pending_permission = {
             "request_id": request_id,
@@ -432,11 +440,13 @@ class AgentSession:
         self.permission_result = None
 
         # Wait for client to respond (with timeout)
+        print(f"[Permission] Waiting for user response (timeout: 5 minutes)...")
         try:
             await asyncio.wait_for(
                 self.permission_event.wait(), timeout=300
             )  # 5 minute timeout
         except asyncio.TimeoutError:
+            print(f"[Permission] ✗ Permission request timed out for: {tool_name}")
             self.pending_permission = None
             return PermissionResultDeny(message="Permission request timed out")
 
@@ -445,6 +455,13 @@ class AgentSession:
         self.pending_permission = None
         self.permission_event = None
         self.permission_result = None
+
+        if isinstance(result, PermissionResultAllow):
+            print(f"[Permission] ✓ User allowed: {tool_name}")
+            if hasattr(result, 'updated_permissions') and result.updated_permissions:
+                print(f"[Permission]   Applied {len(result.updated_permissions)} suggestions")
+        else:
+            print(f"[Permission] ✗ User denied: {tool_name}")
 
         return result
 
@@ -462,13 +479,22 @@ class AgentSession:
         Raises:
             HTTPException: If no matching pending permission
         """
+        print(f"\n[Permission] ========== respond_to_permission ==========")
+        print(f"[Permission] request_id: {request_id}")
+        print(f"[Permission] allowed: {allowed}")
+        print(f"[Permission] apply_suggestions: {apply_suggestions}")
+
         if (
             not self.pending_permission
             or self.pending_permission["request_id"] != request_id
         ):
+            print(f"[Permission] ✗ No matching permission request found")
             raise HTTPException(
                 status_code=404, detail="No matching permission request"
             )
+
+        tool_name = self.pending_permission.get("tool_name", "unknown")
+        print(f"[Permission] Processing response for tool: {tool_name}")
 
         if allowed:
             if apply_suggestions and self.pending_permission["suggestions"]:
@@ -479,15 +505,19 @@ class AgentSession:
                 for s in self.pending_permission["suggestions"]:
                     suggestions.append(PermissionUpdate(**s))
 
+                print(f"[Permission] ✓ Allowing with {len(suggestions)} suggestions applied")
                 self.permission_result = PermissionResultAllow(
                     updated_permissions=suggestions
                 )
             else:
+                print(f"[Permission] ✓ Allowing without suggestions")
                 self.permission_result = PermissionResultAllow()
         else:
+            print(f"[Permission] ✗ Denying request")
             self.permission_result = PermissionResultDeny(message="User denied")
 
         # Signal that response is ready
+        print(f"[Permission] Signaling permission_event to resume execution")
         if self.permission_event:
             self.permission_event.set()
 
