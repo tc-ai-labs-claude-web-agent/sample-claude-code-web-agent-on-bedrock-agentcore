@@ -1,4 +1,4 @@
-import { Settings, Circle, Bot, LogOut, User, FolderOpen, Terminal, Folder, Github, XCircle, Moon, Sun } from 'lucide-react'
+import { Settings, Circle, Bot, LogOut, User, FolderOpen, Terminal, Folder, Github, XCircle, RefreshCw, Moon, Sun } from 'lucide-react'
 
 const hideSettingsButton = import.meta.env.VITE_HIDE_SETTINGS_BUTTON === 'true'
 
@@ -17,6 +17,7 @@ function Header({
   githubAuthStatus,
   githubAuthMessage,
   onCloseProject,
+  onRestartServer,
   closingProject,
   theme,
   onThemeToggle
@@ -71,15 +72,26 @@ function Header({
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         )}
-        {onCloseProject && serverConnected && (
-          <button
-            className="btn-icon close-project-button"
-            onClick={onCloseProject}
-            title="Disconnect from Server (Stop all background requests)"
-            disabled={closingProject}
-          >
-            <XCircle size={18} />
-          </button>
+        {(onCloseProject || onRestartServer) && (
+          serverConnected ? (
+            <button
+              className="btn-icon close-project-button"
+              onClick={onCloseProject}
+              title="Disconnect from Server (Stop all background requests)"
+              disabled={closingProject}
+            >
+              <XCircle size={18} />
+            </button>
+          ) : (
+            <button
+              className="btn-icon restart-server-button"
+              onClick={onRestartServer}
+              title="Restart AgentCore Session"
+              disabled={closingProject}
+            >
+              <RefreshCw size={18} />
+            </button>
+          )
         )}
         {!hideSettingsButton && (
           <button className="btn-icon settings-button" onClick={onSettingsClick} title="Settings">

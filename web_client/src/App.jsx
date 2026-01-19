@@ -767,6 +767,7 @@ function AppContent() {
         githubAuthStatus={githubAuthStatus}
         githubAuthMessage={githubAuthMessage}
         onCloseProject={handleDisconnectServer}
+        onRestartServer={handleForceStopAgentCore}
         closingProject={disconnecting}
         theme={theme}
         onThemeToggle={handleThemeToggle}

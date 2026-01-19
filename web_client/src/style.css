@@ -752,6 +752,24 @@ body {
     cursor: not-allowed;
 }
 
+.restart-server-button {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.restart-server-button:hover:not(:disabled) {
+    background-color: var(--warning-color);
+    color: white;
+    border-color: var(--warning-color);
+    transform: scale(1.05);
+}
+
+.restart-server-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .btn-close-session:focus {
     outline: none;
     box-shadow: none;
