@@ -52,7 +52,7 @@ Before deploying the Claude Code Web Agent, ensure you have:
    ```
 
 3. Edit `config.env` and configure the following:
-   - **AWS_REGION**: Your AWS region (e.g., `us-west-2`)
+   - **AWS_REGION**: Your AWS region (e.g., `ap-southeast-2`)
    - **GITHUB_OAUTH_CLIENT_ID**: From your GitHub OAuth App
    - **GITHUB_OAUTH_CLIENT_SECRET**: From your GitHub OAuth App
    - **COGNITO_*** (Optional): Leave empty to auto-create new Cognito User Pool

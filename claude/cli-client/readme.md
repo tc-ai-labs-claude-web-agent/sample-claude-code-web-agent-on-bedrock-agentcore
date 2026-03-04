@@ -59,7 +59,7 @@ python cli_client/shell_client.py --cwd /workspace
 # Set environment variables
 export TOKEN="your-bearer-token"
 export AGENT_ARN="your-agent-arn"
-export AWS_REGION="us-west-2"  # Optional, defaults to us-west-2
+export AWS_REGION="ap-southeast-2"  # Optional, defaults to ap-southeast-2
 
 # Run in AgentCore mode
 python cli_client/shell_client.py --agentcore
@@ -103,10 +103,10 @@ Goodbye!
 ```
 $ export TOKEN="your-token"
 $ export AGENT_ARN="your-agent-arn"
-$ ./cli_client/shell_client.py --agentcore --region us-west-2
+$ ./cli_client/shell_client.py --agentcore --region ap-southeast-2
 Shell CLI Client
 Mode: AWS Bedrock AgentCore
-Region: us-west-2
+Region: ap-southeast-2
 Session ID: shell-session-a1b2c3d4e5f6
 
 AgentCore $ Hello, what is 1+1?

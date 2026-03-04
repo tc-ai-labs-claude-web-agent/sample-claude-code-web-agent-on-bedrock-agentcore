@@ -18,7 +18,7 @@ echo "======================================"
 
 if [ -z "$AWS_REGION" ]; then
     AWS_REGION=$(aws configure get region)
-    AWS_REGION=${AWS_REGION:-us-west-2}
+    AWS_REGION=${AWS_REGION:-ap-southeast-2}
 fi
 
 if [ -z "$AWS_ACCOUNT_ID" ]; then

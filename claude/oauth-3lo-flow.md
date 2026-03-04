@@ -210,7 +210,7 @@ export OAUTH_CALLBACK_URL="http://localhost:8080/oauth/callback"
 ./serve
 
 # Production (example with AgentCore)
-export OAUTH_CALLBACK_URL="https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/arn%3Aaws%3A.../oauth/callback"
+export OAUTH_CALLBACK_URL="https://bedrock-agentcore.ap-southeast-2.amazonaws.com/runtimes/arn%3Aaws%3A.../oauth/callback"
 uv run uvicorn backend.server:app --host 0.0.0.0 --port 8080
 ```
 

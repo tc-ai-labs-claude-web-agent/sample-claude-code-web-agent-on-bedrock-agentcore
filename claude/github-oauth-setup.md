@@ -26,7 +26,7 @@ The deployment now requires GitHub OAuth configuration for AgentCore Identity Pr
      ```
      https://bedrock-agentcore.<REGION>.amazonaws.com/identities/oauth2/callback
      ```
-     Replace `<REGION>` with your AWS region (e.g., `us-west-2`)
+     Replace `<REGION>` with your AWS region (e.g., `ap-southeast-2`)
 
 4. Click **"Register application"**
 
@@ -88,7 +88,7 @@ The script will display detailed setup instructions and exit.
        --name "github-provider-prod" \
        --credential-provider-vendor "GithubOauth2" \
        --oauth2-provider-config-input "githubOauth2ProviderConfig={clientId=...,clientSecret=...}" \
-       --region us-west-2
+       --region ap-southeast-2
    ```
 
 3. **Update if exists**: If the provider already exists, the script updates it with new credentials
@@ -113,7 +113,7 @@ When the AgentCore runtime receives a request for GitHub authentication:
 
 ```bash
 aws bedrock-agentcore-control list-oauth2-credential-providers \
-    --region us-west-2
+    --region ap-southeast-2
 ```
 
 ### Get Provider Details
@@ -121,7 +121,7 @@ aws bedrock-agentcore-control list-oauth2-credential-providers \
 ```bash
 aws bedrock-agentcore-control get-oauth2-credential-provider \
     --oauth2-credential-provider-id <provider-id> \
-    --region us-west-2
+    --region ap-southeast-2
 ```
 
 ### Update Provider
@@ -129,7 +129,7 @@ aws bedrock-agentcore-control get-oauth2-credential-provider \
 ```bash
 aws bedrock-agentcore-control update-oauth2-credential-provider \
     --oauth2-credential-provider-id <provider-id> \
-    --region us-west-2 \
+    --region ap-southeast-2 \
     --oauth2-provider-config-input "githubOauth2ProviderConfig={clientId=NEW_ID,clientSecret=NEW_SECRET}"
 ```
 
@@ -138,7 +138,7 @@ aws bedrock-agentcore-control update-oauth2-credential-provider \
 ```bash
 aws bedrock-agentcore-control delete-oauth2-credential-provider \
     --oauth2-credential-provider-id <provider-id> \
-    --region us-west-2
+    --region ap-southeast-2
 ```
 
 ## Security Notes

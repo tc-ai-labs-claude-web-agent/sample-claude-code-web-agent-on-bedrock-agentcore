@@ -136,8 +136,8 @@ Cognito configuration is loaded from environment variables in the `.env` file:
 
 ```bash
 # AWS Cognito Configuration
-VITE_COGNITO_REGION=us-west-2
-VITE_COGNITO_USER_POOL_ID=us-west-2_Sw8yyFfBT
+VITE_COGNITO_REGION=ap-southeast-2
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 ```
 

@@ -35,7 +35,7 @@ def get_agentcore_base_url() -> str:
         return os.getenv("AGENTCORE_URL")
     elif os.getenv("AGENT_ARN"):
         agent_arn = os.getenv("AGENT_ARN")
-        region = os.getenv("AWS_REGION", "us-west-2")
+        region = os.getenv("AWS_REGION", "ap-southeast-2")
         encoded_arn = urllib.parse.quote(agent_arn, safe='')
         return f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}"
     else:

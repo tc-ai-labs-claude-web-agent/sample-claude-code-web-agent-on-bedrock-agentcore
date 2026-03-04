@@ -13,7 +13,7 @@ Environment Variables:
     SESSION_ID         - Session ID (optional, auto-generated if not provided)
     AGENTCORE_URL      - Base URL WITHOUT /invocations suffix (optional, overrides --url and AGENT_ARN)
     AGENT_ARN          - Agent ARN for invocation (optional, auto-constructs URL)
-    AWS_REGION         - AWS region (optional, defaults to us-west-2, used with AGENT_ARN)
+    AWS_REGION         - AWS region (optional, defaults to ap-southeast-2, used with AGENT_ARN)
     WORKLOAD_IDENTITY_TOKEN - Workload identity token (optional, for OAuth operations)
 
 URL Convention:
@@ -32,13 +32,13 @@ Examples:
 
     # With AgentCore URL (NO /invocations suffix)
     export TOKEN="your-jwt-token"
-    export AGENTCORE_URL="https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/your-arn"
+    export AGENTCORE_URL="https://bedrock-agentcore.ap-southeast-2.amazonaws.com/runtimes/your-arn"
     python pty_client.py
 
     # With Agent ARN (auto-constructs URL)
     export TOKEN="your-jwt-token"
     export AGENT_ARN="your-agent-arn"
-    export AWS_REGION="us-west-2"
+    export AWS_REGION="ap-southeast-2"
     python pty_client.py
 """
 
@@ -89,7 +89,7 @@ class PTYClient:
         elif os.environ.get('AGENT_ARN'):
             # Construct URL from AGENT_ARN (without /invocations suffix)
             agent_arn = os.environ.get('AGENT_ARN')
-            region = os.environ.get('AWS_REGION', 'us-west-2')
+            region = os.environ.get('AWS_REGION', 'ap-southeast-2')
             encoded_arn = urllib.parse.quote(agent_arn, safe='')
             self.base_url = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}"
         elif base_url:

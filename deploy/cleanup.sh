@@ -38,7 +38,7 @@ fi
 
 if [ -z "$AWS_REGION" ]; then
     AWS_REGION=$(aws configure get region)
-    AWS_REGION=${AWS_REGION:-us-west-2}
+    AWS_REGION=${AWS_REGION:-ap-southeast-2}
 fi
 
 if [ -z "$AWS_ACCOUNT_ID" ]; then
@@ -108,7 +108,7 @@ echo -e "${YELLOW}[3/5] Deleting Cognito resources...${NC}"
 if [ -n "$COGNITO_USER_POOL_ID" ]; then
     POOL_ID="$COGNITO_USER_POOL_ID"
 elif [ -n "$COGNITO_DISCOVERY_URL" ]; then
-    POOL_ID=$(echo "$COGNITO_DISCOVERY_URL" | grep -oP 'us-west-2_[A-Za-z0-9]+')
+    POOL_ID=$(echo "$COGNITO_DISCOVERY_URL" | grep -oP 'ap-southeast-2_[A-Za-z0-9]+')
 else
     POOL_ID=""
 fi

@@ -29,13 +29,13 @@ The web client uses environment variables defined in `web_client/.env`. A templa
 #### `VITE_COGNITO_REGION`
 - **Type**: String
 - **Required**: Yes (if using Cognito authentication)
-- **Example**: `us-west-2`
+- **Example**: `ap-southeast-2`
 - **Description**: AWS region where your Cognito User Pool is located
 
 #### `VITE_COGNITO_USER_POOL_ID`
 - **Type**: String
 - **Required**: Yes (if using Cognito authentication)
-- **Example**: `us-west-2_Sw8yyFfBT`
+- **Example**: `ap-southeast-2_Sw8yyFfBT`
 - **Description**: Your Cognito User Pool ID
 - **How to find**: AWS Console → Cognito → User Pools → [Your Pool] → Pool ID
 
@@ -49,7 +49,7 @@ The web client uses environment variables defined in `web_client/.env`. A templa
 #### `VITE_COGNITO_OAUTH_DOMAIN` (Optional)
 - **Type**: String
 - **Required**: No
-- **Example**: `your-domain.auth.us-west-2.amazoncognito.com`
+- **Example**: `your-domain.auth.ap-southeast-2.amazoncognito.com`
 - **Description**: Cognito OAuth domain for hosted UI (if using OAuth flows)
 
 ### Default Settings
@@ -113,8 +113,8 @@ These settings control the default values in the UI. Users can override them in 
 ```bash
 VITE_USE_INVOCATIONS=true
 VITE_TERMINAL_USE_STREAMING=true
-VITE_COGNITO_REGION=us-west-2
-VITE_COGNITO_USER_POOL_ID=us-west-2_Sw8yyFfBT
+VITE_COGNITO_REGION=ap-southeast-2
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 VITE_DEFAULT_SERVER_URL=http://127.0.0.1:8000
 VITE_DEFAULT_CWD=/workspace
@@ -129,8 +129,8 @@ VITE_HIDE_SETTINGS_BUTTON=false
 ```bash
 VITE_USE_INVOCATIONS=true
 VITE_TERMINAL_USE_STREAMING=true
-VITE_COGNITO_REGION=us-west-2
-VITE_COGNITO_USER_POOL_ID=us-west-2_Sw8yyFfBT
+VITE_COGNITO_REGION=ap-southeast-2
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 VITE_DEFAULT_SERVER_URL=http://localhost:8080
 VITE_DEFAULT_CWD=/workspace
@@ -161,8 +161,8 @@ VITE_HIDE_SETTINGS_BUTTON=false
 ```bash
 VITE_USE_INVOCATIONS=true
 VITE_TERMINAL_USE_STREAMING=true
-VITE_COGNITO_REGION=us-west-2
-VITE_COGNITO_USER_POOL_ID=us-west-2_Sw8yyFfBT
+VITE_COGNITO_REGION=ap-southeast-2
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 VITE_DEFAULT_SERVER_URL=http://127.0.0.1:8000
 VITE_DEFAULT_CWD=/workspace
@@ -179,8 +179,8 @@ For managed environments where admins control all settings:
 ```bash
 VITE_USE_INVOCATIONS=true
 VITE_TERMINAL_USE_STREAMING=true
-VITE_COGNITO_REGION=us-west-2
-VITE_COGNITO_USER_POOL_ID=us-west-2_Sw8yyFfBT
+VITE_COGNITO_REGION=ap-southeast-2
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 VITE_DEFAULT_SERVER_URL=https://api.example.com
 VITE_DEFAULT_CWD=/workspace

@@ -10,10 +10,10 @@ The web client now requires users to authenticate via AWS Cognito before accessi
 
 ### Pool Details
 
-- **Region**: `us-west-2`
-- **User Pool ID**: `us-west-2_Sw8yyFfBT`
+- **Region**: `ap-southeast-2`
+- **User Pool ID**: `ap-southeast-2_Sw8yyFfBT`
 - **Client ID**: `2d2cqqjvpf1ecqjg6gh1u6fivl`
-- **Discovery URL**: `https://cognito-idp.us-west-2.amazonaws.com/us-west-2_Sw8yyFfBT/.well-known/openid-configuration`
+- **Discovery URL**: `https://cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_Sw8yyFfBT/.well-known/openid-configuration`
 
 ### Configuration File
 
@@ -21,8 +21,8 @@ Configuration is stored in `src/config/cognito.js`:
 
 ```javascript
 export const cognitoConfig = {
-  region: 'us-west-2',
-  userPoolId: 'us-west-2_Sw8yyFfBT',
+  region: 'ap-southeast-2',
+  userPoolId: 'ap-southeast-2_Sw8yyFfBT',
   userPoolClientId: '2d2cqqjvpf1ecqjg6gh1u6fivl'
 }
 ```

@@ -19,10 +19,10 @@ Edit `web_client/.env`:
 
 ```bash
 # AWS Region (where your Cognito User Pool is located)
-VITE_COGNITO_REGION=us-west-2
+VITE_COGNITO_REGION=ap-southeast-2
 
 # Your Cognito User Pool ID (format: region_poolId)
-VITE_COGNITO_USER_POOL_ID=us-west-2_XXXXXXXXX
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_XXXXXXXXX
 
 # Your Cognito User Pool Client ID
 VITE_COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -34,7 +34,7 @@ VITE_COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
 
 1. **User Pool ID**:
    - Select your user pool
-   - Copy the "User pool ID" from overview (e.g., `us-west-2_Sw8yyFfBT`)
+   - Copy the "User pool ID" from overview (e.g., `ap-southeast-2_Sw8yyFfBT`)
 
 2. **Client ID**:
    - In your user pool, go to "App integration" tab
@@ -42,7 +42,7 @@ VITE_COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
    - Copy the "Client ID" (e.g., `2d2cqqjvpf1ecqjg6gh1u6fivl`)
 
 3. **Region**:
-   - It's the first part of your User Pool ID (e.g., `us-west-2`)
+   - It's the first part of your User Pool ID (e.g., `ap-southeast-2`)
 
 ## 🎯 Cognito User Pool Requirements
 

@@ -12,7 +12,7 @@ Usage:
 
     # AgentCore mode (requires TOKEN environment variable)
     python shell_client.py --agentcore --agentcore-url https://your-agentcore-url/invocations
-    python shell_client.py --agentcore --region us-west-2
+    python shell_client.py --agentcore --region ap-southeast-2
 
 Environment Variables (for AgentCore mode):
     TOKEN        - Bearer token for authentication
@@ -26,12 +26,12 @@ Examples:
 
     # AgentCore mode with direct URL
     export TOKEN="your-token"
-    python shell_client.py --agentcore --agentcore-url https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/your-arn/invocations
+    python shell_client.py --agentcore --agentcore-url https://bedrock-agentcore.ap-southeast-2.amazonaws.com/runtimes/your-arn/invocations
 
     # AgentCore mode with ARN (auto-constructs URL)
     export TOKEN="your-token"
     export AGENT_ARN="your-agent-arn"
-    python shell_client.py --agentcore --region us-west-2
+    python shell_client.py --agentcore --region ap-southeast-2
 """
 
 import argparse
@@ -74,7 +74,7 @@ class ShellClient:
                 self.region = None
             else:
                 self.agent_arn = agent_arn or os.environ.get('AGENT_ARN')
-                self.region = region or os.environ.get('AWS_REGION', 'us-west-2')
+                self.region = region or os.environ.get('AWS_REGION', 'ap-southeast-2')
 
                 if not self.agent_arn:
                     raise ValueError("AGENT_ARN environment variable or --agentcore-url is required for AgentCore mode")
@@ -302,12 +302,12 @@ Examples:
 
   # AWS Bedrock AgentCore with direct URL
   export TOKEN="your-token"
-  python shell_client.py --agentcore --agentcore-url https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/your-arn/invocations
+  python shell_client.py --agentcore --agentcore-url https://bedrock-agentcore.ap-southeast-2.amazonaws.com/runtimes/your-arn/invocations
 
   # AWS Bedrock AgentCore with ARN (auto-constructs URL)
   export TOKEN="your-token"
   export AGENT_ARN="your-agent-arn"
-  python shell_client.py --agentcore --region us-west-2
+  python shell_client.py --agentcore --region ap-southeast-2
         """
     )
 
@@ -336,7 +336,7 @@ Examples:
     )
     parser.add_argument(
         "--region",
-        help="AWS region for AgentCore (default: from AWS_REGION env or us-west-2)"
+        help="AWS region for AgentCore (default: from AWS_REGION env or ap-southeast-2)"
     )
     parser.add_argument(
         "--agent-arn",

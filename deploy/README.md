@@ -79,11 +79,11 @@ Edit `config.env` with your values:
 
 ```bash
 # Minimum required configuration
-AWS_REGION=us-west-2
+AWS_REGION=ap-southeast-2
 AWS_ACCOUNT_ID=123456789012  # Optional, auto-detected if not set
 
 # Optional: Configure Cognito for authentication
-COGNITO_DISCOVERY_URL=https://cognito-idp.us-west-2.amazonaws.com/us-west-2_XXXXX/.well-known/openid-configuration
+COGNITO_DISCOVERY_URL=https://cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_XXXXX/.well-known/openid-configuration
 COGNITO_CLIENT_ID=your-client-id
 
 # Optional: Change default values
@@ -194,7 +194,7 @@ Deploys the React web client to AWS Amplify.
 
 ```bash
 # AWS Configuration
-AWS_REGION=us-west-2              # AWS region for all resources
+AWS_REGION=ap-southeast-2              # AWS region for all resources
 AWS_ACCOUNT_ID=                   # Auto-detected if not set
 
 # Project Configuration
@@ -252,8 +252,8 @@ All resources are created with consistent naming:
 |----------|-------------|---------|
 | ECR Repository | `${ECR_REPOSITORY_NAME}` | `agentcore/claude-code` |
 | AgentCore Runtime | `${AGENT_RUNTIME_NAME}` | `claude_code` |
-| IAM Role | `${IAM_ROLE_NAME}-${REGION}-${ENV}` | `AmazonBedrockAgentCoreSDKRuntime-us-west-2-prod` |
-| S3 Bucket | `${S3_WORKSPACE_BUCKET_PREFIX}-${REGION}-${ACCOUNT_ID}` | `agentcore-us-west-2-123456789012` |
+| IAM Role | `${IAM_ROLE_NAME}-${REGION}-${ENV}` | `AmazonBedrockAgentCoreSDKRuntime-ap-southeast-2-prod` |
+| S3 Bucket | `${S3_WORKSPACE_BUCKET_PREFIX}-${REGION}-${ACCOUNT_ID}` | `agentcore-ap-southeast-2-123456789012` |
 | Amplify App | `${AMPLIFY_APP_NAME}` | `claude-agent-web-client` |
 | CloudWatch Logs | `/aws/bedrock-agentcore/runtimes/${AGENT_RUNTIME_NAME}` | `/aws/bedrock-agentcore/runtimes/claude_code` |
 
@@ -294,10 +294,10 @@ vi config.env
 
 ```bash
 # Tail logs in real-time
-aws logs tail /aws/bedrock-agentcore/runtimes/claude_code --follow --region us-west-2
+aws logs tail /aws/bedrock-agentcore/runtimes/claude_code --follow --region ap-southeast-2
 
 # Get recent logs
-aws logs tail /aws/bedrock-agentcore/runtimes/claude_code --since 1h --region us-west-2
+aws logs tail /aws/bedrock-agentcore/runtimes/claude_code --since 1h --region ap-southeast-2
 ```
 
 ### Check AgentCore Status
@@ -305,7 +305,7 @@ aws logs tail /aws/bedrock-agentcore/runtimes/claude_code --since 1h --region us
 ```bash
 aws bedrock-agentcore-control get-agent-runtime \
   --agent-runtime-id <runtime-id> \
-  --region us-west-2
+  --region ap-southeast-2
 ```
 
 ### Check Amplify Deployment
@@ -315,22 +315,22 @@ aws bedrock-agentcore-control get-agent-runtime \
 aws amplify list-jobs \
   --app-id <app-id> \
   --branch-name main \
-  --region us-west-2
+  --region ap-southeast-2
 
 # Get deployment details
 aws amplify get-job \
   --app-id <app-id> \
   --branch-name main \
   --job-id <job-id> \
-  --region us-west-2
+  --region ap-southeast-2
 ```
 
 ### AWS Console Links
 
-- **Bedrock AgentCore**: https://console.aws.amazon.com/bedrock/home?region=us-west-2#/agentcore
-- **Amplify**: https://console.aws.amazon.com/amplify/home?region=us-west-2
-- **ECR**: https://console.aws.amazon.com/ecr/repositories?region=us-west-2
-- **CloudWatch Logs**: https://console.aws.amazon.com/cloudwatch/home?region=us-west-2#logsV2:log-groups
+- **Bedrock AgentCore**: https://console.aws.amazon.com/bedrock/home?region=ap-southeast-2#/agentcore
+- **Amplify**: https://console.aws.amazon.com/amplify/home?region=ap-southeast-2
+- **ECR**: https://console.aws.amazon.com/ecr/repositories?region=ap-southeast-2
+- **CloudWatch Logs**: https://console.aws.amazon.com/cloudwatch/home?region=ap-southeast-2#logsV2:log-groups
 
 ## Cleanup
 
@@ -352,7 +352,7 @@ This will prompt for confirmation, then delete:
 ```bash
 aws logs delete-log-group \
   --log-group-name /aws/bedrock-agentcore/runtimes/claude_code \
-  --region us-west-2
+  --region ap-southeast-2
 ```
 
 ## Troubleshooting
@@ -384,9 +384,9 @@ On macOS with Apple Silicon, ARM64 support is native. On Intel Macs or Linux x86
 
 ```bash
 # Re-authenticate to ECR
-aws ecr get-login-password --region us-west-2 | \
+aws ecr get-login-password --region ap-southeast-2 | \
   docker login --username AWS --password-stdin \
-  ${AWS_ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com
+  ${AWS_ACCOUNT_ID}.dkr.ecr.ap-southeast-2.amazonaws.com
 ```
 
 ### IAM role creation fails
@@ -438,7 +438,7 @@ vi web_client/.env
 
 S3 bucket names are global. The default naming pattern includes region and account ID for uniqueness:
 - Pattern: `{prefix}-{region}-{account_id}`
-- Example: `agentcore-us-west-2-123456789012`
+- Example: `agentcore-ap-southeast-2-123456789012`
 
 If bucket name conflicts still occur:
 1. Edit `config.env`
@@ -450,8 +450,8 @@ If bucket name conflicts still occur:
 Bucket must be empty before deletion:
 ```bash
 # Replace with your actual bucket name
-aws s3 rm s3://agentcore-us-west-2-123456789012 --recursive --region us-west-2
-aws s3api delete-bucket --bucket agentcore-us-west-2-123456789012 --region us-west-2
+aws s3 rm s3://agentcore-ap-southeast-2-123456789012 --recursive --region ap-southeast-2
+aws s3api delete-bucket --bucket agentcore-ap-southeast-2-123456789012 --region ap-southeast-2
 ```
 
 ## Security Best Practices
@@ -465,7 +465,7 @@ aws s3api delete-bucket --bucket agentcore-us-west-2-123456789012 --region us-we
 
 ## Cost Estimates
 
-Approximate monthly costs (us-west-2, subject to change):
+Approximate monthly costs (ap-southeast-2, subject to change):
 
 | Service | Usage | Estimated Cost |
 |---------|-------|----------------|

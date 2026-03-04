@@ -52,7 +52,7 @@
    ```
 
 3. 编辑 `config.env` 并配置以下内容:
-   - **AWS_REGION**: 您的 AWS 区域(例如 `us-west-2`)
+   - **AWS_REGION**: 您的 AWS 区域(例如 `ap-southeast-2`)
    - **GITHUB_OAUTH_CLIENT_ID**: 来自您的 GitHub OAuth 应用
    - **GITHUB_OAUTH_CLIENT_SECRET**: 来自您的 GitHub OAuth 应用
    - **COGNITO_*** (可选): 留空以自动创建新的 Cognito 用户池

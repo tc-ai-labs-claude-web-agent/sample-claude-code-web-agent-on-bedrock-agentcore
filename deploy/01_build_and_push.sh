@@ -21,7 +21,7 @@ fi
 if [ -z "$AWS_REGION" ]; then
     echo -e "${YELLOW}AWS_REGION not set, using default...${NC}"
     AWS_REGION=$(aws configure get region)
-    AWS_REGION=${AWS_REGION:-us-west-2}
+    AWS_REGION=${AWS_REGION:-ap-southeast-2}
     echo -e "${GREEN}Using AWS_REGION: ${AWS_REGION}${NC}"
 fi
 

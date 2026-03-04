@@ -313,7 +313,7 @@ def get_bedrock_agentcore_client():
         boto3 client for bedrock-agentcore service
     """
     import os
-    region = os.environ.get("AWS_DEFAULT_REGION", "us-west-2")
+    region = os.environ.get("AWS_DEFAULT_REGION", "ap-southeast-2")
     return boto3.client("bedrock-agentcore", region_name=region)
 
 

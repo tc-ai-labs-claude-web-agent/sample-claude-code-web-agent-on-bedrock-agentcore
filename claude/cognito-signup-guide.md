@@ -50,16 +50,16 @@ Configure Cognito in `web_client/.env`:
 
 ```bash
 # AWS region where your Cognito user pool is located
-VITE_COGNITO_REGION=us-west-2
+VITE_COGNITO_REGION=ap-southeast-2
 
 # Cognito User Pool ID (format: region_poolId)
-VITE_COGNITO_USER_POOL_ID=us-west-2_XXXXXXXXX
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_XXXXXXXXX
 
 # Cognito User Pool Client ID (alphanumeric string)
 VITE_COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # Optional: OAuth domain for hosted UI
-VITE_COGNITO_OAUTH_DOMAIN=your-domain.auth.us-west-2.amazoncognito.com
+VITE_COGNITO_OAUTH_DOMAIN=your-domain.auth.ap-southeast-2.amazoncognito.com
 ```
 
 ### Finding Your Cognito Configuration
@@ -68,7 +68,7 @@ VITE_COGNITO_OAUTH_DOMAIN=your-domain.auth.us-west-2.amazoncognito.com
 2. Select your user pool
 3. **User Pool ID**: Found in "User pool overview"
 4. **Client ID**: Found in "App integration" → "App clients"
-5. **Region**: Part of the User Pool ID (e.g., `us-west-2`)
+5. **Region**: Part of the User Pool ID (e.g., `ap-southeast-2`)
 
 ## Cognito User Pool Configuration
 
@@ -268,8 +268,8 @@ const result = await signUp({
 Create `.env.production`:
 
 ```bash
-VITE_COGNITO_REGION=us-west-2
-VITE_COGNITO_USER_POOL_ID=us-west-2_PROD_POOL_ID
+VITE_COGNITO_REGION=ap-southeast-2
+VITE_COGNITO_USER_POOL_ID=ap-southeast-2_PROD_POOL_ID
 VITE_COGNITO_CLIENT_ID=prod_client_id_here
 ```
 
