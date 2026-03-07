@@ -4,6 +4,7 @@ import {
   signIn,
   signUp,
   signOut,
+  confirmSignIn,
   confirmSignUp,
   resendSignUpCode,
   getCurrentUser,
@@ -55,7 +56,7 @@ export function AuthProvider({ children }) {
   }, [checkUser])
 
   // Sign in (accepts username or email)
-  const login = useCallback(async (usernameOrEmail, password) => {
+  const getOtp = useCallback(async (usernameOrEmail, password) => {
     setLoading(true)
     setError(null)
     try {
@@ -63,9 +64,61 @@ export function AuthProvider({ children }) {
 
       const result = await signIn({
         username: usernameOrEmail,
+        options: { authFlowType: "USER_AUTH" },
+      });
+
+      console.table(result);
+
+      const r2 = await confirmSignIn({ challengeResponse: "EMAIL_OTP" });
+
+      console.table(r2);
+
+    } catch (err) {
+      console.error('❌ Login error:', err)
+      console.error('Error name:', err.name)
+      console.error('Error message:', err.message)
+
+      // Map Cognito errors to user-friendly messages
+      let userMessage = err.message || 'Failed to sign in'
+
+      if (err.name === 'UserNotFoundException') {
+        userMessage = 'User does not exist. Please check your username/email or sign up for a new account.'
+      } else if (err.name === 'NotAuthorizedException') {
+        userMessage = 'Incorrect username or password. Please try again.'
+      } else if (err.name === 'UserNotConfirmedException') {
+        userMessage = 'Your email is not verified. Please check your email for the verification code.'
+      } else if (err.name === 'PasswordResetRequiredException') {
+        userMessage = 'Password reset is required. Please reset your password.'
+      } else if (err.name === 'TooManyRequestsException' || err.name === 'LimitExceededException') {
+        userMessage = 'Too many login attempts. Please try again later.'
+      } else if (err.name === 'InvalidParameterException') {
+        userMessage = 'Invalid username or password format.'
+      }
+
+      setError(userMessage)
+      return { success: false, error: userMessage, errorName: err.name }
+    } finally {
+      setLoading(false)
+      return { success: true }
+    }
+  }, [])
+
+  // Sign in (accepts username or email)
+  const login = useCallback(async (usernameOrEmail, password) => {
+    setLoading(true)
+    setError(null)
+    try {
+      console.log('🔐 Starting login for:', usernameOrEmail)
+
+      /*
+      const result = await signIn({
+        username: usernameOrEmail,
         password
       })
+*/
+      // change for email otp flow
 
+      const result = await confirmSignIn({challengeResponse: password});
       console.log('✅ Login result:', result)
 
       if (result.isSignedIn) {
@@ -105,6 +158,7 @@ export function AuthProvider({ children }) {
       return { success: false, error: userMessage, errorName: err.name }
     } finally {
       setLoading(false)
+      return { success: true, error: userMessage, errorName: err.name }
     }
   }, [checkUser])
 
@@ -285,6 +339,7 @@ export function AuthProvider({ children }) {
     resendCode,
     logout,
     getValidAccessToken,
+    getOtp,
     isAuthenticated: !!user
   }
 

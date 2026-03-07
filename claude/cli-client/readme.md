@@ -65,7 +65,7 @@ export AWS_REGION="ap-southeast-2"  # Optional, defaults to ap-southeast-2
 python cli_client/shell_client.py --agentcore
 
 # Or specify region via command line
-python cli_client/shell_client.py --agentcore --region us-east-1
+python cli_client/shell_client.py --agentcore --region ap-southeast-2
 
 # Use the test script
 ./test_agentcore_shell.sh

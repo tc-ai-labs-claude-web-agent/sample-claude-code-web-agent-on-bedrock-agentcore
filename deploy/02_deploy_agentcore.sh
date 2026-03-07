@@ -48,7 +48,7 @@ if aws s3 ls "s3://${BUCKET_NAME}" &>/dev/null; then
 else
     echo -e "${YELLOW}Creating S3 bucket: ${BUCKET_NAME}${NC}"
 
-    if [ "$AWS_REGION" == "us-east-1" ]; then
+    if [ "$AWS_REGION" == "ap-southeast-2" ]; then
         aws s3api create-bucket --bucket "${BUCKET_NAME}" --region "${AWS_REGION}"
     else
         aws s3api create-bucket \
@@ -89,23 +89,16 @@ if [ -z "$COGNITO_USER_POOL_ID" ] || [ -z "$COGNITO_CLIENT_ID" ]; then
     else
         echo -e "${YELLOW}Creating Cognito User Pool: ${COGNITO_POOL_NAME}${NC}"
 
+## TODO had to do some tweaks in console for both pool & client to enable passwordless via email
+
         CREATE_POOL_OUTPUT=$(aws cognito-idp create-user-pool \
             --pool-name "${COGNITO_POOL_NAME}" \
             --region "${AWS_REGION}" \
-            --policies '{
-                "PasswordPolicy": {
-                    "MinimumLength": 8,
-                    "RequireUppercase": false,
-                    "RequireLowercase": false,
-                    "RequireNumbers": false,
-                    "RequireSymbols": false,
-                    "TemporaryPasswordValidityDays": 7
-                }
-            }' \
+            --username-attributes email \
             --auto-verified-attributes email \
             --mfa-configuration OFF \
             --email-configuration EmailSendingAccount=COGNITO_DEFAULT \
-            --admin-create-user-config AllowAdminCreateUserOnly=false \
+            --admin-create-user-config AllowAdminCreateUserOnly=true \
             --account-recovery-setting '{
                 "RecoveryMechanisms": [
                     {"Priority": 1, "Name": "verified_email"},
