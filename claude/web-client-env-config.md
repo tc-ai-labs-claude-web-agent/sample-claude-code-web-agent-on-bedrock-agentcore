@@ -76,10 +76,10 @@ These settings control the default values in the UI. Users can override them in 
 
 #### `VITE_DEFAULT_MODEL`
 - **Type**: String (model ID)
-- **Default**: `global.anthropic.claude-sonnet-4-5-20250929-v1:0`
+- **Default**: `global.anthropic.claude-sonnet-4-6`
 - **Description**: Default Claude model for main responses
 - **Examples**:
-  - Claude Sonnet 4.5: `global.anthropic.claude-sonnet-4-5-20250929-v1:0`
+  - Claude Sonnet 4.6: `global.anthropic.claude-sonnet-4-6`
   - Claude Opus 4.5: `global.anthropic.claude-opus-4-5-20250514-v1:0`
   - Via LiteLLM: `gpt-4`, `gpt-4o`, `claude-3-5-sonnet-20241022`
 
@@ -118,7 +118,7 @@ VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 VITE_DEFAULT_SERVER_URL=http://127.0.0.1:8000
 VITE_DEFAULT_CWD=/workspace
-VITE_DEFAULT_MODEL=global.anthropic.claude-sonnet-4-5-20250929-v1:0
+VITE_DEFAULT_MODEL=global.anthropic.claude-sonnet-4-6
 VITE_DEFAULT_BACKGROUND_MODEL=global.anthropic.claude-haiku-4-5-20251001-v1:0
 VITE_DEFAULT_ENABLE_PROXY=false
 VITE_HIDE_SETTINGS_BUTTON=false
@@ -134,7 +134,7 @@ VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 VITE_DEFAULT_SERVER_URL=http://localhost:8080
 VITE_DEFAULT_CWD=/workspace
-VITE_DEFAULT_MODEL=global.anthropic.claude-sonnet-4-5-20250929-v1:0
+VITE_DEFAULT_MODEL=global.anthropic.claude-sonnet-4-6
 VITE_DEFAULT_BACKGROUND_MODEL=global.anthropic.claude-haiku-4-5-20251001-v1:0
 VITE_DEFAULT_ENABLE_PROXY=false
 VITE_HIDE_SETTINGS_BUTTON=false
@@ -184,7 +184,7 @@ VITE_COGNITO_USER_POOL_ID=ap-southeast-2_Sw8yyFfBT
 VITE_COGNITO_CLIENT_ID=2d2cqqjvpf1ecqjg6gh1u6fivl
 VITE_DEFAULT_SERVER_URL=https://api.example.com
 VITE_DEFAULT_CWD=/workspace
-VITE_DEFAULT_MODEL=global.anthropic.claude-sonnet-4-5-20250929-v1:0
+VITE_DEFAULT_MODEL=global.anthropic.claude-sonnet-4-6
 VITE_DEFAULT_BACKGROUND_MODEL=global.anthropic.claude-haiku-4-5-20251001-v1:0
 VITE_DEFAULT_ENABLE_PROXY=false
 VITE_HIDE_SETTINGS_BUTTON=true

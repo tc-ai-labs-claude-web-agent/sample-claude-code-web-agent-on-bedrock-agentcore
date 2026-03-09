@@ -25,7 +25,7 @@ function handleFetchResponse(response) {
   }
   return response
 }
-
+# https%3A%2F%2Fbedrock-agentcore.ap-southeast-2.amazonaws.com%2Fidentities%2Foauth2%2Fcallback%2F5f2c67bd-3fca-4adf-983e-f2517621ccd4
 /**
  * Direct API client - calls REST endpoints directly
  */

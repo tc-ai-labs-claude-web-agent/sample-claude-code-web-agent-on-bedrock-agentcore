@@ -36,9 +36,9 @@ function ChatContainer({
   const availableModels = import.meta.env.VITE_AVAILABLE_MODELS
     ? import.meta.env.VITE_AVAILABLE_MODELS.split(',')
     : [
-        'global.anthropic.claude-sonnet-4-5-20250929-v1:0',
-        'global.anthropic.claude-haiku-4-5-20251001-v1:0',
-        'qwen.qwen3-coder-480b-a35b-v1:0'
+        'global.anthropic.claude-sonnet-4-6',
+        'global.anthropic.claude-haiku-4-5-20251001-v1:0'//,
+        //'qwen.qwen3-coder-480b-a35b-v1:0' // no qwen for now
       ]
 
   // Update selected model when currentModel prop changes

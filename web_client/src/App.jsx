@@ -32,7 +32,7 @@ const hideSettingsButton = import.meta.env.VITE_HIDE_SETTINGS_BUTTON === 'true'
 const DEFAULT_SETTINGS = {
   serverUrl: import.meta.env.VITE_DEFAULT_SERVER_URL || 'http://127.0.0.1:8000',
   cwd: import.meta.env.VITE_DEFAULT_CWD || '/workspace',
-  model: import.meta.env.VITE_DEFAULT_MODEL || 'global.anthropic.claude-sonnet-4-5-20250929-v1:0',
+  model: import.meta.env.VITE_DEFAULT_MODEL || 'global.anthropic.claude-sonnet-4-6',
   backgroundModel: import.meta.env.VITE_DEFAULT_BACKGROUND_MODEL || 'global.anthropic.claude-haiku-4-5-20251001-v1:0'
 }
 
